@@ -31,25 +31,13 @@ jobs:
           --health-retries=10
 
     env:
-      # Datasource (Spring)
       SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
 
-      # Flyway (garante que ele use o MESMO user/pass do datasource)
       SPRING_FLYWAY_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_FLYWAY_USER: ${{ secrets.DB_USERNAME }}
       SPRING_FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-      # Opcional: deixa o log mais limpo no CI
-      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
-
-      # usados no "wait"
-      MYSQL_HOST: 127.0.0.1
-      MYSQL_PORT: ${{ vars.DB_PORT }}
-      MYSQL_APP_USER: ${{ secrets.DB_USERNAME }}
-      MYSQL_APP_PASS: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout
@@ -65,31 +53,19 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
 
-      - name: Print Spring datasource env (sanity check)
-        shell: bash
-        run: |
-          echo "SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL"
-          echo "SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME"
-          echo "SPRING_DATASOURCE_PASSWORD is set? $([[ -n "$SPRING_DATASOURCE_PASSWORD" ]] && echo yes || echo no)"
-          echo "SPRING_FLYWAY_URL=$SPRING_FLYWAY_URL"
-          echo "SPRING_FLYWAY_USER=$SPRING_FLYWAY_USER"
-          echo "SPRING_FLYWAY_PASSWORD is set? $([[ -n "$SPRING_FLYWAY_PASSWORD" ]] && echo yes || echo no)"
-
-      - name: Wait for MySQL (app user)
+      - name: Wait for MySQL
         shell: bash
         run: |
           set -e
           for i in {1..30}; do
-            if mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u"$MYSQL_APP_USER" -p"$MYSQL_APP_PASS" --silent; then
+            if mysqladmin ping -h 127.0.0.1 -P "${{ vars.DB_PORT }}" -u"${{ secrets.DB_USERNAME }}" -p"${{ secrets.DB_PASSWORD }}" --silent; then
               echo "MySQL is ready"
-              break
+              exit 0
             fi
             echo "Waiting for MySQL... ($i/30)"
             sleep 2
           done
-
-          # última checagem pra garantir que não passou batido
-          mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u"$MYSQL_APP_USER" -p"$MYSQL_APP_PASS" --silent
+          echo "MySQL did not become ready in time" && exit 1
 
       - name: Build & Test
         run: mvn -B -U clean verify

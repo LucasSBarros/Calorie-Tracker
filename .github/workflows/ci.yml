@@ -24,30 +24,32 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
         ports:
           - 3306:3306
-        # OBS: não use ${MYSQL_ROOT_PASSWORD} aqui — o runner NÃO expande isso dentro de options.
-        # Healthcheck via root/senha a gente garante com os steps abaixo.
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD} --silent"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
 
     env:
-      # Sobrescreve o application.yml apenas no CI
+      # Datasource (Spring)
       SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
 
+      # Flyway (garante que ele use o MESMO user/pass do datasource)
+      SPRING_FLYWAY_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_FLYWAY_USER: ${{ secrets.DB_USERNAME }}
+      SPRING_FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
       # Opcional: deixa o log mais limpo no CI
       SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
 
-      # usados nos steps
+      # usados no "wait"
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: ${{ vars.DB_PORT }}
       MYSQL_APP_USER: ${{ secrets.DB_USERNAME }}
       MYSQL_APP_PASS: ${{ secrets.DB_PASSWORD }}
-      MYSQL_DB_NAME: ${{ vars.DB_NAME }}
 
     steps:
       - name: Checkout
@@ -63,45 +65,15 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
 
-      - name: Wait for MySQL (root)
+      - name: Print Spring datasource env (sanity check)
         shell: bash
-        env:
-          MYSQL_PWD: ${{ secrets.DB_ROOT_PASSWORD }}
         run: |
-          set -e
-          for i in {1..30}; do
-            if mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" -uroot --silent; then
-              echo "MySQL is ready (root)"
-              exit 0
-            fi
-            echo "Waiting for MySQL... ($i/30)"
-            sleep 2
-          done
-          echo "MySQL did not become ready in time" && exit 1
-
-      - name: Ensure DB user & grants
-        shell: bash
-        env:
-          MYSQL_PWD: ${{ secrets.DB_ROOT_PASSWORD }}
-        run: |
-          set -e
-          mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -uroot -e "
-            CREATE DATABASE IF NOT EXISTS \`$MYSQL_DB_NAME\`;
-            CREATE USER IF NOT EXISTS '$MYSQL_APP_USER'@'%' IDENTIFIED BY '$MYSQL_APP_PASS';
-            GRANT ALL PRIVILEGES ON \`$MYSQL_DB_NAME\`.* TO '$MYSQL_APP_USER'@'%';
-            FLUSH PRIVILEGES;
-          "
-
-      - name: Debug DB access (grants)
-        shell: bash
-        env:
-          MYSQL_PWD: ${{ secrets.DB_ROOT_PASSWORD }}
-        run: |
-          set -e
-          echo "DB_NAME=$MYSQL_DB_NAME"
-          echo "DB_USER=$MYSQL_APP_USER"
-          mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -uroot -e "SELECT user, host FROM mysql.user;"
-          mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -uroot -e "SHOW GRANTS FOR '$MYSQL_APP_USER'@'%';" || true
+          echo "SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL"
+          echo "SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME"
+          echo "SPRING_DATASOURCE_PASSWORD is set? $([[ -n "$SPRING_DATASOURCE_PASSWORD" ]] && echo yes || echo no)"
+          echo "SPRING_FLYWAY_URL=$SPRING_FLYWAY_URL"
+          echo "SPRING_FLYWAY_USER=$SPRING_FLYWAY_USER"
+          echo "SPRING_FLYWAY_PASSWORD is set? $([[ -n "$SPRING_FLYWAY_PASSWORD" ]] && echo yes || echo no)"
 
       - name: Wait for MySQL (app user)
         shell: bash
@@ -109,10 +81,10 @@ jobs:
           set -e
           for i in {1..30}; do
             if mysqladmin ping -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u"$MYSQL_APP_USER" -p"$MYSQL_APP_PASS" --silent; then
-              echo "MySQL is ready (app user)"
+              echo "MySQL is ready"
               break
             fi
-            echo "Waiting for MySQL (app user)... ($i/30)"
+            echo "Waiting for MySQL... ($i/30)"
             sleep 2
           done
 

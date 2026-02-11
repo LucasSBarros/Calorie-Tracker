@@ -12,32 +12,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.4
-        env:
-          MYSQL_DATABASE: ${{ vars.DB_NAME }}
-          MYSQL_USER: ${{ secrets.DB_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD} --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
-    env:
-      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
-      SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-      SPRING_FLYWAY_URL: jdbc:mysql://127.0.0.1:${{ vars.DB_PORT }}/${{ vars.DB_NAME }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_FLYWAY_USER: ${{ secrets.DB_USERNAME }}
-      SPRING_FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    runs-on: debian:bullseye-slim
 
     steps:
       - name: Checkout
@@ -49,23 +24,6 @@ jobs:
           distribution: temurin
           java-version: "25"
           cache: maven
-
-      - name: Install MySQL client
-        run: sudo apt-get update && sudo apt-get install -y mysql-client
-
-      - name: Wait for MySQL
-        shell: bash
-        run: |
-          set -e
-          for i in {1..30}; do
-            if mysqladmin ping -h 127.0.0.1 -P "${{ vars.DB_PORT }}" -u"${{ secrets.DB_USERNAME }}" -p"${{ secrets.DB_PASSWORD }}" --silent; then
-              echo "MySQL is ready"
-              exit 0
-            fi
-            echo "Waiting for MySQL... ($i/30)"
-            sleep 2
-          done
-          echo "MySQL did not become ready in time" && exit 1
 
       - name: Build & Test
         run: mvn -B -U clean verify

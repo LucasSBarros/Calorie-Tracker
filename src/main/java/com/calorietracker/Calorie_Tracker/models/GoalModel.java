@@ -29,10 +29,6 @@ public class GoalModel implements Serializable {
 
     private BigDecimal weight; // Peso
 
-    private BigDecimal imc; // Índice de Massa Corporal
-
     private BigDecimal bf; // Gordura corporal
-
-    private BigDecimal tmb; // Taxa Metabólica Basal
 
 }

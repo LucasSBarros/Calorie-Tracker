@@ -15,12 +15,8 @@ public interface StatusMapper {
     StatusDto toDto(StatusModel model);
 
     @Mapping(target = "idStatus", ignore = true)
-    @Mapping(target = "imc", ignore = true)
-    @Mapping(target = "tmb", ignore = true)
     StatusModel toEntity(StatusRequestDto dto);
 
     @Mapping(target = "idStatus", ignore = true)
-    @Mapping(target = "imc", ignore = true)
-    @Mapping(target = "tmb", ignore = true)
     void updateEntityFromDto(StatusRequestDto dto, @MappingTarget StatusModel entity);
 }

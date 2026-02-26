@@ -1,7 +1,5 @@
 package com.calorietracker.Calorie_Tracker.services.impl;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,12 +29,7 @@ public class DietServiceImpl implements DietService {
     @Transactional
     public DietDto create(DietRequestDto request) {
         DietModel diet = dietMapper.toEntity(request);
-
-        diet.setMeals(new HashSet<>());
-        diet.setTotalCalories(BigDecimal.ZERO);
-
-        DietModel saved = dietRepository.save(diet);
-        return dietMapper.toDto(saved);
+        return dietMapper.toDto(dietRepository.save(diet));
     }
 
     @Override
@@ -67,8 +60,6 @@ public class DietServiceImpl implements DietService {
     @Override
     @Transactional
     public boolean delete(UUID id) {
-        if (!dietRepository.existsById(id))
-            return false;
         dietRepository.deleteById(id);
         return true;
     }

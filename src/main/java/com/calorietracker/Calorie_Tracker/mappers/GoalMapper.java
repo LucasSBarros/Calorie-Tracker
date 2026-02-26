@@ -15,12 +15,8 @@ public interface GoalMapper {
     GoalDto toDto(GoalModel model);
 
     @Mapping(target = "idGoal", ignore = true)
-    @Mapping(target = "imc", ignore = true)
-    @Mapping(target = "tmb", ignore = true)
     GoalModel toEntity(GoalRequestDto dto);
 
     @Mapping(target = "idGoal", ignore = true)
-    @Mapping(target = "imc", ignore = true)
-    @Mapping(target = "tmb", ignore = true)
     void updateEntityFromDto(GoalRequestDto dto, @MappingTarget GoalModel entity);
 }

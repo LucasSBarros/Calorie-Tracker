@@ -3,7 +3,7 @@ package com.calorietracker.Calorie_Tracker.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -17,16 +17,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "meals")
 public class MealModel implements Serializable {
+
+    public MealModel() {
+        this.mealIngredients = new LinkedHashSet<>();
+        this.totalCaloriesPerMeal = BigDecimal.ZERO;
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -39,7 +42,7 @@ public class MealModel implements Serializable {
     private String description; // Descrição da Refeição
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MealIngredientModel> mealIngredients; // Ingredientes
+    private LinkedHashSet<MealIngredientModel> mealIngredients; // Ingredientes
 
     private BigDecimal totalCaloriesPerMeal; // Valor total das calorias de uma refeição
 

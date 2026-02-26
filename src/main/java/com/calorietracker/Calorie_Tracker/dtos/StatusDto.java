@@ -6,7 +6,5 @@ import java.util.UUID;
 public record StatusDto(
                 UUID idStatus,
                 BigDecimal weight,
-                BigDecimal imc,
-                BigDecimal bf,
-                BigDecimal tmb) {
+                BigDecimal bf) {
 }

@@ -1,0 +1,66 @@
+package com.calorietracker.services.impl;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.calorietracker.dtos.IngredientDto;
+import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.mappers.IngredientMapper;
+import com.calorietracker.models.IngredientModel;
+import com.calorietracker.repositories.IngredientRepository;
+import com.calorietracker.services.IngredientService;
+
+@Service
+public class IngredientServiceImpl implements IngredientService {
+
+    private final IngredientRepository ingredientRepository;
+    private final IngredientMapper ingredientMapper;
+
+    public IngredientServiceImpl(IngredientRepository ingredientRepository, IngredientMapper ingredientMapper) {
+        this.ingredientRepository = ingredientRepository;
+        this.ingredientMapper = ingredientMapper;
+    }
+
+    @Override
+    @Transactional
+    public IngredientDto create(IngredientRequestDto request) {
+        IngredientModel ingredient = ingredientMapper.toEntity(request);
+        return ingredientMapper.toDto(ingredientRepository.save(ingredient));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<IngredientDto> findAll() {
+        return ingredientRepository.findAll()
+                .stream()
+                .map(ingredientMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<IngredientDto> findById(UUID id) {
+        return ingredientRepository.findById(id).map(ingredientMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public Optional<IngredientDto> update(UUID id, IngredientRequestDto request) {
+        return ingredientRepository.findById(id).map(existing -> {
+            ingredientMapper.updateEntityFromDto(request, existing);
+            IngredientModel saved = ingredientRepository.save(existing);
+            return ingredientMapper.toDto(saved);
+        });
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(UUID id) {
+        ingredientRepository.deleteById(id);
+        return true;
+    }
+}

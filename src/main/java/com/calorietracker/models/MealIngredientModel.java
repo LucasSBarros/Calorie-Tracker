@@ -2,6 +2,7 @@ package com.calorietracker.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -39,5 +40,27 @@ public class MealIngredientModel implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ingredient_id", nullable = false)
     private IngredientModel ingredient; // Ingrediente
+
+    /**
+     * Método para Cálculo de Calorias por 100g
+     * 
+     * @return
+     */
+    public BigDecimal calculateCalories() {
+
+        if (ingredient == null || ingredient.getMacro() == null || weight == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal caloriesPer100g = ingredient.getMacro().getCalories();
+
+        if (caloriesPer100g == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return caloriesPer100g
+                .multiply(weight)
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+    }
 
 }

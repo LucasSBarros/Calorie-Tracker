@@ -41,12 +41,12 @@ public class MealServiceImpl implements MealService {
     @Override
     @Transactional(readOnly = true)
     public Optional<MealDto> findById(UUID id) {
-        return mealRepository.findById(id).map(mealMapper::toDto);
+        return mealRepository.findWithDetailsByIdMeal(id).map(mealMapper::toDto);
     }
 
     @Override
     public Optional<MealDto> update(UUID id, MealRequestDto request) {
-        return mealRepository.findById(id).map(existing -> {
+        return mealRepository.findWithDetailsByIdMeal(id).map(existing -> {
             mealMapper.updateEntityFromDto(request, existing);
             MealModel saved = mealRepository.save(existing);
             return mealMapper.toDto(saved);

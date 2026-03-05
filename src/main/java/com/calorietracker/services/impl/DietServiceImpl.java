@@ -24,9 +24,14 @@ public class DietServiceImpl implements DietService {
     private final DietMapper dietMapper;
 
     @Override
+    @Transactional
     public DietDto create(DietRequestDto request) {
         DietModel diet = dietMapper.toEntity(request);
-        return dietMapper.toDto(dietRepository.save(diet));
+        DietModel saved = dietRepository.save(diet);
+
+        return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
+                .map(dietMapper::toDto)
+                .orElseGet(() -> dietMapper.toDto(saved));
     }
 
     @Override
@@ -41,20 +46,28 @@ public class DietServiceImpl implements DietService {
     @Override
     @Transactional(readOnly = true)
     public Optional<DietDto> findById(UUID id) {
-        return dietRepository.findById(id).map(dietMapper::toDto);
+        return dietRepository.findWithDetailsByIdDiet(id)
+                .map(dietMapper::toDto);
     }
 
     @Override
+    @Transactional
     public Optional<DietDto> update(UUID id, DietRequestDto request) {
         return dietRepository.findById(id).map(existing -> {
             dietMapper.updateEntityFromDto(request, existing);
             DietModel saved = dietRepository.save(existing);
-            return dietMapper.toDto(saved);
+
+            return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
+                    .map(dietMapper::toDto)
+                    .orElseGet(() -> dietMapper.toDto(saved));
         });
     }
 
     @Override
+    @Transactional
     public boolean delete(UUID id) {
+        if (!dietRepository.existsById(id))
+            return false;
         dietRepository.deleteById(id);
         return true;
     }

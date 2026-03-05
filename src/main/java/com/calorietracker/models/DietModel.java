@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.hibernate.annotations.UuidGenerator;
@@ -39,7 +40,7 @@ public class DietModel implements Serializable {
     private String name; // Name
 
     @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private LinkedHashSet<MealModel> meals; // Refeições
+    private Set<MealModel> meals; // Refeições
 
     private BigDecimal totalCalories; // Total de calorias
 

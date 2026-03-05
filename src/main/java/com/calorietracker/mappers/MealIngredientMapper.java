@@ -1,26 +1,34 @@
 package com.calorietracker.mappers;
 
+import java.util.UUID;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.calorietracker.dtos.MealIngredientDto;
 import com.calorietracker.dtos.MealIngredientRequestDto;
+import com.calorietracker.models.IngredientModel;
 import com.calorietracker.models.MealIngredientModel;
+import com.calorietracker.repositories.IngredientRepository;
 
-@Mapper(componentModel = "spring", uses = IngredientMapper.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface MealIngredientMapper {
+@Mapper(componentModel = "spring", uses = IngredientMapper.class)
+public abstract class MealIngredientMapper {
 
-    MealIngredientDto toDto(MealIngredientModel model);
+    @Autowired
+    protected IngredientRepository ingredientRepository;
+
+    public abstract MealIngredientDto toDto(MealIngredientModel model);
 
     @Mapping(target = "idMealIngredient", ignore = true)
-    @Mapping(target = "meal", ignore = true)
-    @Mapping(target = "ingredient", ignore = true)
-    MealIngredientModel toEntity(MealIngredientRequestDto dto);
+    @Mapping(target = "meal", ignore = true) // será setado no MealMapper @AfterMapping
+    @Mapping(target = "ingredient", source = "ingredientId") // UUID -> IngredientModel
+    public abstract MealIngredientModel toEntity(MealIngredientRequestDto dto);
 
-    @Mapping(target = "idMealIngredient", ignore = true)
-    @Mapping(target = "meal", ignore = true)
-    @Mapping(target = "ingredient", ignore = true)
-    void updateEntityFromDto(MealIngredientRequestDto dto, @MappingTarget MealIngredientModel entity);
+    protected IngredientModel map(UUID ingredientId) {
+        if (ingredientId == null)
+            return null;
+        return ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + ingredientId));
+    }
 }

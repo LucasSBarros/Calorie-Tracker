@@ -14,19 +14,16 @@ import com.calorietracker.models.GoalModel;
 import com.calorietracker.repositories.GoalRepository;
 import com.calorietracker.services.GoalService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class GoalServiceImpl implements GoalService {
 
     private final GoalRepository goalRepository;
     private final GoalMapper goalMapper;
 
-    public GoalServiceImpl(GoalRepository goalRepository, GoalMapper goalMapper) {
-        this.goalRepository = goalRepository;
-        this.goalMapper = goalMapper;
-    }
-
     @Override
-    @Transactional
     public GoalDto create(GoalRequestDto request) {
         GoalModel goal = goalMapper.toEntity(request);
         return goalMapper.toDto(goalRepository.save(goal));
@@ -48,7 +45,6 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    @Transactional
     public Optional<GoalDto> update(UUID id, GoalRequestDto request) {
         return goalRepository.findById(id).map(existing -> {
             goalMapper.updateEntityFromDto(request, existing);
@@ -58,7 +54,6 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    @Transactional
     public boolean delete(UUID id) {
         goalRepository.deleteById(id);
         return true;

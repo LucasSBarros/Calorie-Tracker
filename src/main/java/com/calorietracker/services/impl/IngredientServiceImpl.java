@@ -14,19 +14,16 @@ import com.calorietracker.models.IngredientModel;
 import com.calorietracker.repositories.IngredientRepository;
 import com.calorietracker.services.IngredientService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientRepository ingredientRepository;
     private final IngredientMapper ingredientMapper;
 
-    public IngredientServiceImpl(IngredientRepository ingredientRepository, IngredientMapper ingredientMapper) {
-        this.ingredientRepository = ingredientRepository;
-        this.ingredientMapper = ingredientMapper;
-    }
-
     @Override
-    @Transactional
     public IngredientDto create(IngredientRequestDto request) {
         IngredientModel ingredient = ingredientMapper.toEntity(request);
         return ingredientMapper.toDto(ingredientRepository.save(ingredient));
@@ -48,7 +45,6 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    @Transactional
     public Optional<IngredientDto> update(UUID id, IngredientRequestDto request) {
         return ingredientRepository.findById(id).map(existing -> {
             ingredientMapper.updateEntityFromDto(request, existing);
@@ -58,7 +54,6 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    @Transactional
     public boolean delete(UUID id) {
         ingredientRepository.deleteById(id);
         return true;

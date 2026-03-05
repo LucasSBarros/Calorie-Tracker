@@ -14,19 +14,16 @@ import com.calorietracker.models.UserModel;
 import com.calorietracker.repositories.UserRepository;
 import com.calorietracker.services.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
-
     @Override
-    @Transactional
     public UserDto create(UserRequestDto request) {
         UserModel user = userMapper.toEntity(request);
         return userMapper.toDto(userRepository.save(user));
@@ -48,7 +45,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public Optional<UserDto> update(UUID id, UserRequestDto request) {
         return userRepository.findById(id).map(existing -> {
             userMapper.updateEntityFromDto(request, existing);
@@ -58,7 +54,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public boolean delete(UUID id) {
         userRepository.deleteById(id);
         return true;

@@ -14,19 +14,16 @@ import com.calorietracker.models.StatusModel;
 import com.calorietracker.repositories.StatusRepository;
 import com.calorietracker.services.StatusService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class StatusServiceImpl implements StatusService {
 
     private final StatusRepository statusRepository;
     private final StatusMapper statusMapper;
 
-    public StatusServiceImpl(StatusRepository statusRepository, StatusMapper statusMapper) {
-        this.statusRepository = statusRepository;
-        this.statusMapper = statusMapper;
-    }
-
     @Override
-    @Transactional
     public StatusDto create(StatusRequestDto request) {
         StatusModel status = statusMapper.toEntity(request);
         return statusMapper.toDto(statusRepository.save(status));
@@ -48,7 +45,6 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    @Transactional
     public Optional<StatusDto> update(UUID id, StatusRequestDto request) {
         return statusRepository.findById(id).map(existing -> {
             statusMapper.updateEntityFromDto(request, existing);
@@ -58,7 +54,6 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    @Transactional
     public boolean delete(UUID id) {
         statusRepository.deleteById(id);
         return true;

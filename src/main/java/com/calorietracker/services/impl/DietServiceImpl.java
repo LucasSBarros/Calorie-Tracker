@@ -14,19 +14,16 @@ import com.calorietracker.models.DietModel;
 import com.calorietracker.repositories.DietRepository;
 import com.calorietracker.services.DietService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class DietServiceImpl implements DietService {
 
     private final DietRepository dietRepository;
     private final DietMapper dietMapper;
 
-    public DietServiceImpl(DietRepository dietRepository, DietMapper dietMapper) {
-        this.dietRepository = dietRepository;
-        this.dietMapper = dietMapper;
-    }
-
     @Override
-    @Transactional
     public DietDto create(DietRequestDto request) {
         DietModel diet = dietMapper.toEntity(request);
         return dietMapper.toDto(dietRepository.save(diet));
@@ -48,7 +45,6 @@ public class DietServiceImpl implements DietService {
     }
 
     @Override
-    @Transactional
     public Optional<DietDto> update(UUID id, DietRequestDto request) {
         return dietRepository.findById(id).map(existing -> {
             dietMapper.updateEntityFromDto(request, existing);
@@ -58,7 +54,6 @@ public class DietServiceImpl implements DietService {
     }
 
     @Override
-    @Transactional
     public boolean delete(UUID id) {
         dietRepository.deleteById(id);
         return true;

@@ -12,11 +12,16 @@ import com.calorietracker.models.StatusModel;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface StatusMapper {
 
+    @Mapping(target = "userId", source = "user.idUser")
     StatusDto toDto(StatusModel model);
 
     @Mapping(target = "idStatus", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     StatusModel toEntity(StatusRequestDto dto);
 
     @Mapping(target = "idStatus", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     void updateEntityFromDto(StatusRequestDto dto, @MappingTarget StatusModel entity);
 }

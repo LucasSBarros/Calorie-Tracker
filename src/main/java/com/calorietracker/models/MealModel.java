@@ -59,10 +59,6 @@ public class MealModel implements Serializable {
      */
     public BigDecimal calculateTotalCaloriesPerMeal() {
 
-        if (mealIngredients == null || mealIngredients.isEmpty()) {
-            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-        }
-
         BigDecimal total = BigDecimal.ZERO;
 
         for (MealIngredientModel mealIngredient : mealIngredients) {

@@ -46,11 +46,23 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Optional<MealDto> update(UUID id, MealRequestDto request) {
-        return mealRepository.findWithDetailsByIdMeal(id).map(existing -> {
+
+        Optional<MealDto> result = Optional.empty();
+
+        Optional<MealModel> mealOpt = mealRepository.findWithDetailsByIdMeal(id);
+
+        if (mealOpt.isPresent()) {
+
+            MealModel existing = mealOpt.get();
+
             mealMapper.updateEntityFromDto(request, existing);
+
             MealModel saved = mealRepository.save(existing);
-            return mealMapper.toDto(saved);
-        });
+
+            result = Optional.of(mealMapper.toDto(saved));
+        }
+
+        return result;
     }
 
     @Override

@@ -46,11 +46,23 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Optional<IngredientDto> update(UUID id, IngredientRequestDto request) {
-        return ingredientRepository.findById(id).map(existing -> {
+
+        Optional<IngredientDto> result = Optional.empty();
+
+        Optional<IngredientModel> ingredientOpt = ingredientRepository.findById(id);
+
+        if (ingredientOpt.isPresent()) {
+
+            IngredientModel existing = ingredientOpt.get();
+
             ingredientMapper.updateEntityFromDto(request, existing);
+
             IngredientModel saved = ingredientRepository.save(existing);
-            return ingredientMapper.toDto(saved);
-        });
+
+            result = Optional.of(ingredientMapper.toDto(saved));
+        }
+
+        return result;
     }
 
     @Override

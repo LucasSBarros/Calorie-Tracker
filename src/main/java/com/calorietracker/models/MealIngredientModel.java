@@ -48,19 +48,8 @@ public class MealIngredientModel implements Serializable {
      */
     public BigDecimal calculateCalories() {
 
-        if (ingredient == null || ingredient.getMacro() == null || weight == null) {
-            return BigDecimal.ZERO;
-        }
-
-        BigDecimal caloriesPer100g = ingredient.getMacro().getCalories();
-
-        if (caloriesPer100g == null) {
-            return BigDecimal.ZERO;
-        }
-
-        return caloriesPer100g
-                .multiply(weight)
-                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        return ingredient.getMacro().getCalories().multiply(weight).divide(BigDecimal.valueOf(100), 2,
+                RoundingMode.HALF_UP);
     }
 
 }

@@ -12,6 +12,7 @@ import com.calorietracker.models.UserModel;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
 
+    @Mapping(target = "age", expression = "java(model.calculateAge())")
     UserDto toDto(UserModel model);
 
     @Mapping(target = "idUser", ignore = true)

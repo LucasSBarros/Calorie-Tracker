@@ -26,9 +26,14 @@ public abstract class MealIngredientMapper {
     public abstract MealIngredientModel toEntity(MealIngredientRequestDto dto);
 
     protected IngredientModel map(UUID ingredientId) {
-        if (ingredientId == null)
-            return null;
-        return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + ingredientId));
+
+        IngredientModel result = null;
+
+        if (ingredientId != null) {
+            result = ingredientRepository.findById(ingredientId)
+                    .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + ingredientId));
+        }
+
+        return result;
     }
 }

@@ -12,11 +12,18 @@ import com.calorietracker.models.GoalModel;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface GoalMapper {
 
+    @Mapping(target = "userId", source = "user.idUser")
     GoalDto toDto(GoalModel model);
 
     @Mapping(target = "idGoal", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "startWeight", ignore = true)
+    @Mapping(target = "startBf", ignore = true)
     GoalModel toEntity(GoalRequestDto dto);
 
     @Mapping(target = "idGoal", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "startWeight", ignore = true)
+    @Mapping(target = "startBf", ignore = true)
     void updateEntityFromDto(GoalRequestDto dto, @MappingTarget GoalModel entity);
 }

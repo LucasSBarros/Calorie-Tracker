@@ -37,10 +37,15 @@ public abstract class MealMapper {
     public abstract void updateEntityFromDto(MealRequestDto dto, @MappingTarget MealModel entity);
 
     protected DietModel map(UUID dietId) {
-        if (dietId == null)
-            return null;
-        return dietRepository.findById(dietId)
-                .orElseThrow(() -> new IllegalArgumentException("Diet not found: " + dietId));
+
+        DietModel result = null;
+
+        if (dietId != null) {
+            result = dietRepository.findById(dietId)
+                    .orElseThrow(() -> new IllegalArgumentException("Diet not found: " + dietId));
+        }
+
+        return result;
     }
 
     @AfterMapping

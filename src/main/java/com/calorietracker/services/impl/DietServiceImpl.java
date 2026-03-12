@@ -66,8 +66,6 @@ public class DietServiceImpl implements DietService {
     @Override
     @Transactional
     public boolean delete(UUID id) {
-        if (!dietRepository.existsById(id))
-            return false;
         dietRepository.deleteById(id);
         return true;
     }

@@ -5,6 +5,9 @@ import java.util.UUID;
 
 public record GoalDto(
         UUID idGoal,
+        UUID userId,
         BigDecimal weight,
-        BigDecimal bf) {
+        BigDecimal startWeight,
+        BigDecimal bf,
+        BigDecimal startBf) {
 }

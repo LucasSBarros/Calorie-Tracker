@@ -46,11 +46,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDto> update(UUID id, UserRequestDto request) {
-        return userRepository.findById(id).map(existing -> {
+
+        Optional<UserDto> result = Optional.empty();
+
+        Optional<UserModel> userOpt = userRepository.findById(id);
+
+        if (userOpt.isPresent()) {
+
+            UserModel existing = userOpt.get();
+
             userMapper.updateEntityFromDto(request, existing);
+
             UserModel saved = userRepository.save(existing);
-            return userMapper.toDto(saved);
-        });
+
+            result = Optional.of(userMapper.toDto(saved));
+        }
+
+        return result;
     }
 
     @Override

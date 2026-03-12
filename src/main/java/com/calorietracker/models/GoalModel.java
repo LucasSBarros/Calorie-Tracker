@@ -30,8 +30,16 @@ public class GoalModel implements Serializable {
     @UuidGenerator
     private UUID idGoal; // ID
 
-    private BigDecimal weight; // Peso
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private UserModel user; // Usuário
 
-    private BigDecimal bf; // Gordura corporal
+    private BigDecimal weight; // Meta de Peso 
+
+     private BigDecimal startWeight; // Peso Inicial
+
+    private BigDecimal bf; // Meta de Gordura corporal
+
+     private BigDecimal startBf; // Peso Final
 
 }

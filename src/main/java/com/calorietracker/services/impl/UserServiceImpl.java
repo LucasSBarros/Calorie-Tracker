@@ -25,12 +25,6 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public UserDto create(UserRequestDto request) {
-        UserModel user = userMapper.toEntity(request);
-        return userMapper.toDto(userRepository.save(user));
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         return userRepository.findAll()

@@ -24,18 +24,6 @@ public class UserController {
     }
 
     /**
-     * POST - /api/users, Rota de criação de uma usera.
-     * 
-     * @param requestDto
-     * @return
-     */
-    @PostMapping
-    public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserRequestDto requestDto) {
-        UserDto created = userService.create(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
-
-    /**
      * GET - /api/users, Rota que busca por todas as useras.
      * 
      * @return

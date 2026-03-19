@@ -10,14 +10,6 @@ import com.calorietracker.dtos.UserRequestDto;
 public interface UserService {
 
     /**
-     * Método de criação de um usuário
-     * 
-     * @param request
-     * @return
-     */
-    UserDto create(UserRequestDto request);
-
-    /**
      * Método de listagem dos usuários
      * 
      * @return

@@ -20,12 +20,5 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "imc", ignore = true)
     @Mapping(target = "tmb", ignore = true)
-    UserModel toEntity(UserRequestDto dto);
-
-    @Mapping(target = "idUser", ignore = true)
-    @Mapping(target = "email", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "imc", ignore = true)
-    @Mapping(target = "tmb", ignore = true)
     void updateEntityFromDto(UserRequestDto dto, @MappingTarget UserModel entity);
 }

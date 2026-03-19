@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.calorietracker.dtos.MealDto;
@@ -16,7 +15,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/meals")
-@Validated
 public class MealController {
 
     private final MealService mealService;
@@ -85,8 +83,7 @@ public class MealController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMeal(@PathVariable UUID id) {
-        boolean deleted = mealService.delete(id);
-        return deleted ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        mealService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

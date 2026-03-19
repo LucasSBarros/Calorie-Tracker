@@ -49,7 +49,7 @@ public interface StatusService {
      * @param id
      * @return
      */
-    boolean delete(UUID id);
+    void delete(UUID id);
 
     /**
      * Método para exibir o progresso do usuário

@@ -11,9 +11,9 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 
 public record UserRequestDto(
-                @NotBlank String name,
-                @NotNull @Positive BigDecimal weight,
-                @NotNull @Positive BigDecimal height,
-                @NotNull @Past LocalDate birthDate,
-                @NotNull Gender gender) {
+        @NotBlank String name,
+        @NotNull @Positive BigDecimal weight,
+        @NotNull @Positive BigDecimal height,
+        @NotNull @Past LocalDate birthDate,
+        @NotNull Gender gender) {
 }

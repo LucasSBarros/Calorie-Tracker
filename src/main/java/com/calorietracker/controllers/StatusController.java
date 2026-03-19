@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.calorietracker.dtos.StatusDto;
@@ -19,7 +18,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/status")
-@Validated
 public class StatusController {
 
     private final StatusService statusService;
@@ -78,10 +76,8 @@ public class StatusController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStatus(@PathVariable UUID id) {
-        boolean deleted = statusService.delete(id);
-        return deleted
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        statusService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**

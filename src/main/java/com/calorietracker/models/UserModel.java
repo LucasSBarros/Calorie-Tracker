@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,6 +40,12 @@ public class UserModel implements Serializable {
     private UUID idUser; // ID
 
     private String name; // Nome
+
+    @Column(nullable = false, unique = true)
+    private String email; // E-mail
+
+    @Column(nullable = false)
+    private String password; // Senha
 
     private BigDecimal weight; // Peso (armazenado em gramas)
 

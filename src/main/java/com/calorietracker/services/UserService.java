@@ -47,5 +47,5 @@ public interface UserService {
      * @param id
      * @return
      */
-    boolean delete(UUID id);
+    void delete(UUID id);
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.calorietracker.dtos.MealDto;
 import com.calorietracker.dtos.MealRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.MealMapper;
 import com.calorietracker.models.MealModel;
 import com.calorietracker.repositories.MealRepository;
@@ -66,8 +67,10 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!mealRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Meal not found: " + id);
+        }
         mealRepository.deleteById(id);
-        return true;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.calorietracker.dtos.MealIngredientDto;
 import com.calorietracker.dtos.MealIngredientRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.models.IngredientModel;
 import com.calorietracker.models.MealIngredientModel;
 import com.calorietracker.repositories.IngredientRepository;
@@ -31,7 +32,7 @@ public abstract class MealIngredientMapper {
 
         if (ingredientId != null) {
             result = ingredientRepository.findById(ingredientId)
-                    .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + ingredientId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Ingredient not found: " + ingredientId));
         }
 
         return result;

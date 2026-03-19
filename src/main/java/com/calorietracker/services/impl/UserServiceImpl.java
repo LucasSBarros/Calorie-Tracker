@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.calorietracker.dtos.UserDto;
 import com.calorietracker.dtos.UserRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.UserMapper;
 import com.calorietracker.models.UserModel;
 import com.calorietracker.repositories.UserRepository;
@@ -66,8 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User not found: " + id);
+        }
+
         userRepository.deleteById(id);
-        return true;
     }
 }

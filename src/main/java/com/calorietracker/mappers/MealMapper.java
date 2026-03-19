@@ -7,6 +7,7 @@ import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.calorietracker.dtos.MealRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.dtos.MealDto;
 import com.calorietracker.dtos.MealIngredientRequestDto;
 import com.calorietracker.models.DietModel;
@@ -42,7 +43,7 @@ public abstract class MealMapper {
 
         if (dietId != null) {
             result = dietRepository.findById(dietId)
-                    .orElseThrow(() -> new IllegalArgumentException("Diet not found: " + dietId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Diet not found: " + dietId));
         }
 
         return result;

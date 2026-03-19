@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.calorietracker.dtos.GoalDto;
 import com.calorietracker.dtos.GoalRequestDto;
+import com.calorietracker.exceptions.ConflictException;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.GoalMapper;
 import com.calorietracker.models.GoalModel;
 import com.calorietracker.models.UserModel;
@@ -31,11 +33,11 @@ public class GoalServiceImpl implements GoalService {
     @Override
     public GoalDto create(GoalRequestDto request) {
         if (goalRepository.existsByUser_IdUser(request.userId())) {
-            throw new IllegalArgumentException("User already has a goal: " + request.userId());
+            throw new ConflictException("User already has a goal: " + request.userId());
         }
 
         UserModel user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.userId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
         GoalModel goal = goalMapper.toEntity(request);
         goal.setUser(user);
@@ -76,7 +78,12 @@ public class GoalServiceImpl implements GoalService {
             GoalModel existing = goalOpt.get();
 
             UserModel user = userRepository.findById(request.userId())
-                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.userId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
+
+            if (!existing.getUser().getIdUser().equals(request.userId())
+                    && goalRepository.existsByUser_IdUser(request.userId())) {
+                throw new ConflictException("User already has a goal: " + request.userId());
+            }
 
             goalMapper.updateEntityFromDto(request, existing);
             existing.setUser(user);
@@ -90,8 +97,11 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!goalRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Goal not found: " + id);
+        }
+
         goalRepository.deleteById(id);
-        return true;
     }
 }

@@ -47,5 +47,5 @@ public interface DietService {
      * @param id
      * @return
      */
-    boolean delete(UUID id);
+    void delete(UUID id);
 }

@@ -13,20 +13,20 @@ import com.calorietracker.models.DietModel;
 @Repository
 public interface DietRepository extends JpaRepository<DietModel, UUID> {
 
-    @EntityGraph(attributePaths = {
-            "meals",
-            "meals.mealIngredients",
-            "meals.mealIngredients.ingredient",
-            "meals.mealIngredients.ingredient.macro"
-    })
-    Optional<DietModel> findWithDetailsByIdDiet(UUID idDiet);
+        @EntityGraph(attributePaths = {
+                        "meals",
+                        "meals.mealIngredients",
+                        "meals.mealIngredients.ingredient",
+                        "meals.mealIngredients.ingredient.macro"
+        })
+        Optional<DietModel> findWithDetailsByIdDiet(UUID idDiet);
 
-    @Override
-    @EntityGraph(attributePaths = {
-            "meals",
-            "meals.mealIngredients",
-            "meals.mealIngredients.ingredient",
-            "meals.mealIngredients.ingredient.macro"
-    })
-    List<DietModel> findAll();
+        @Override
+        @EntityGraph(attributePaths = {
+                        "meals",
+                        "meals.mealIngredients",
+                        "meals.mealIngredients.ingredient",
+                        "meals.mealIngredients.ingredient.macro"
+        })
+        List<DietModel> findAll();
 }

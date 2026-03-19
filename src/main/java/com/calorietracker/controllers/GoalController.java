@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.calorietracker.dtos.GoalDto;
@@ -16,7 +15,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/goals")
-@Validated
 public class GoalController {
 
     private final GoalService goalService;
@@ -26,7 +24,7 @@ public class GoalController {
     }
 
     /**
-     * POST - /api/goals, Rota de criação de uma goala.
+     * POST - /api/goals, Rota de criação de um objetivo.
      * 
      * @param requestDto
      * @return
@@ -38,7 +36,7 @@ public class GoalController {
     }
 
     /**
-     * GET - /api/goals, Rota que busca por todas as goalas.
+     * GET - /api/goals, Rota que busca por todos os objetivos.
      * 
      * @return
      */
@@ -48,7 +46,7 @@ public class GoalController {
     }
 
     /**
-     * GET - /api/goals/id, Rota que busca uma goala a partir do seu ID.
+     * GET - /api/goals/id, Rota que busca um objetivo a partir do seu ID.
      * 
      * @param id
      * @return
@@ -61,7 +59,7 @@ public class GoalController {
     }
 
     /**
-     * PUT - /api/goals/id, Rota que atualiza uma goala
+     * PUT - /api/goals/id, Rota que atualiza um objetivo
      * 
      * @param id
      * @param requestDto
@@ -78,15 +76,14 @@ public class GoalController {
     }
 
     /**
-     * DELETE - /api/goals/id, Rota que deleta uma goala
+     * DELETE - /api/goals/id, Rota que deleta um objetivo
      * 
      * @param id
      * @return
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGoal(@PathVariable UUID id) {
-        boolean deleted = goalService.delete(id);
-        return deleted ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        goalService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

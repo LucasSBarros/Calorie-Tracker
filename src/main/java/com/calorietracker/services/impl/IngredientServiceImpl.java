@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.calorietracker.dtos.IngredientDto;
 import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.IngredientMapper;
 import com.calorietracker.models.IngredientModel;
 import com.calorietracker.repositories.IngredientRepository;
@@ -66,8 +67,10 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!ingredientRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Ingredient not found: " + id);
+        }
         ingredientRepository.deleteById(id);
-        return true;
     }
 }

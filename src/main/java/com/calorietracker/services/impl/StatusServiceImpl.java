@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.calorietracker.dtos.StatusDto;
 import com.calorietracker.dtos.StatusRequestDto;
 import com.calorietracker.dtos.UserProgressDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.StatusMapper;
 import com.calorietracker.models.GoalModel;
 import com.calorietracker.models.StatusModel;
@@ -38,7 +39,7 @@ public class StatusServiceImpl implements StatusService {
     @Override
     public StatusDto create(StatusRequestDto request) {
         UserModel user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.userId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
         StatusModel status = statusMapper.toEntity(request);
         status.setUser(user);
@@ -74,7 +75,7 @@ public class StatusServiceImpl implements StatusService {
             StatusModel existing = statusOpt.get();
 
             UserModel user = userRepository.findById(request.userId())
-                    .orElseThrow(() -> new IllegalArgumentException("User not found: " + request.userId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
             statusMapper.updateEntityFromDto(request, existing);
             existing.setUser(user);
@@ -88,9 +89,11 @@ public class StatusServiceImpl implements StatusService {
     }
 
     @Override
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!statusRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Status not found: " + id);
+        }
         statusRepository.deleteById(id);
-        return true;
     }
 
     @Override
@@ -98,6 +101,9 @@ public class StatusServiceImpl implements StatusService {
     public Optional<UserProgressDto> getUserProgress(UUID userId) {
 
         Optional<UserProgressDto> result = Optional.empty();
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
         Optional<GoalModel> goalOpt = goalRepository.findByUser_IdUser(userId);
         Optional<StatusModel> currentStatusOpt = statusRepository.findFirstByUser_IdUserOrderByCreatedAtDesc(userId);

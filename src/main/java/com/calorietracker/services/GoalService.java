@@ -47,5 +47,5 @@ public interface GoalService {
      * @param id
      * @return
      */
-    boolean delete(UUID id);
+    void delete(UUID id);
 }

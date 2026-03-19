@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.calorietracker.dtos.DietDto;
 import com.calorietracker.dtos.DietRequestDto;
+import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.DietMapper;
 import com.calorietracker.models.DietModel;
 import com.calorietracker.repositories.DietRepository;
@@ -24,7 +25,6 @@ public class DietServiceImpl implements DietService {
     private final DietMapper dietMapper;
 
     @Override
-    @Transactional
     public DietDto create(DietRequestDto request) {
         DietModel diet = dietMapper.toEntity(request);
         DietModel saved = dietRepository.save(diet);
@@ -51,7 +51,6 @@ public class DietServiceImpl implements DietService {
     }
 
     @Override
-    @Transactional
     public Optional<DietDto> update(UUID id, DietRequestDto request) {
         return dietRepository.findById(id).map(existing -> {
             dietMapper.updateEntityFromDto(request, existing);
@@ -64,9 +63,11 @@ public class DietServiceImpl implements DietService {
     }
 
     @Override
-    @Transactional
-    public boolean delete(UUID id) {
+    public void delete(UUID id) {
+        if (!dietRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Diet not found: " + id);
+        }
+
         dietRepository.deleteById(id);
-        return true;
     }
 }

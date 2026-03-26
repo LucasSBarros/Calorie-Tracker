@@ -1,11 +1,14 @@
 package com.calorietracker.dtos;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record DietRequestDto(
                 @NotBlank String name,
+                @NotNull UUID userId,
                 LocalDate initialDate,
                 LocalDate finalDate) {
 }

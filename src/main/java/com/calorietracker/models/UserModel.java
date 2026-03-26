@@ -66,6 +66,9 @@ public class UserModel implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StatusModel> statuses = new LinkedHashSet<>(); // Status
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DietModel> diets = new LinkedHashSet<>(); // Dietas
+
     /**
      * Constantes (Magic Numbers)
      */

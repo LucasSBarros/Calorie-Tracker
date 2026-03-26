@@ -12,7 +12,9 @@ import com.calorietracker.dtos.DietRequestDto;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.DietMapper;
 import com.calorietracker.models.DietModel;
+import com.calorietracker.models.UserModel;
 import com.calorietracker.repositories.DietRepository;
+import com.calorietracker.repositories.UserRepository;
 import com.calorietracker.services.DietService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +24,17 @@ import lombok.RequiredArgsConstructor;
 public class DietServiceImpl implements DietService {
 
     private final DietRepository dietRepository;
+    private final UserRepository userRepository;
     private final DietMapper dietMapper;
 
     @Override
     public DietDto create(DietRequestDto request) {
+        UserModel user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
+
         DietModel diet = dietMapper.toEntity(request);
+        diet.setUser(user);
+
         DietModel saved = dietRepository.save(diet);
 
         return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
@@ -52,14 +60,30 @@ public class DietServiceImpl implements DietService {
 
     @Override
     public Optional<DietDto> update(UUID id, DietRequestDto request) {
-        return dietRepository.findById(id).map(existing -> {
+
+        Optional<DietDto> result = Optional.empty();
+
+        Optional<DietModel> dietOpt = dietRepository.findById(id);
+
+        if (dietOpt.isPresent()) {
+            DietModel existing = dietOpt.get();
+
+            UserModel user = userRepository.findById(request.userId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
+
             dietMapper.updateEntityFromDto(request, existing);
+            existing.setUser(user);
+
             DietModel saved = dietRepository.save(existing);
 
-            return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
+            DietDto dto = dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
                     .map(dietMapper::toDto)
                     .orElseGet(() -> dietMapper.toDto(saved));
-        });
+
+            result = Optional.of(dto);
+        }
+
+        return result;
     }
 
     @Override

@@ -33,6 +33,7 @@ Thumbs.db
 *.env
 application-local.yml
 application-dev.yml
+env.sh
 
 # ===== Archives =====
 *.jar

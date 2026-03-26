@@ -15,11 +15,13 @@ public interface DietMapper {
     DietDto toDto(DietModel model);
 
     @Mapping(target = "idDiet", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "meals", ignore = true)
     @Mapping(target = "totalCalories", ignore = true)
     DietModel toEntity(DietRequestDto dto);
 
     @Mapping(target = "idDiet", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "meals", ignore = true)
     @Mapping(target = "totalCalories", ignore = true)
     void updateEntityFromDto(DietRequestDto dto, @MappingTarget DietModel entity);

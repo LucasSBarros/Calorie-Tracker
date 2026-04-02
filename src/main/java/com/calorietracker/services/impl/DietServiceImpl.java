@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.ApplicationEventPublisher;
+import com.calorietracker.events.DietPublishedEvent;
 
 import com.calorietracker.dtos.DietDto;
 import com.calorietracker.dtos.DietRequestDto;
@@ -26,8 +28,10 @@ public class DietServiceImpl implements DietService {
     private final DietRepository dietRepository;
     private final UserRepository userRepository;
     private final DietMapper dietMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public DietDto create(DietRequestDto request) {
         UserModel user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
@@ -36,6 +40,14 @@ public class DietServiceImpl implements DietService {
         diet.setUser(user);
 
         DietModel saved = dietRepository.save(diet);
+
+        eventPublisher.publishEvent(
+                new DietPublishedEvent(
+                        saved.getIdDiet(),
+                        user.getIdUser(),
+                        user.getEmail(),
+                        user.getName(),
+                        saved.getName()));
 
         return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
                 .map(dietMapper::toDto)

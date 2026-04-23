@@ -38,6 +38,7 @@ public class DietServiceImpl implements DietService {
 
         DietModel diet = dietMapper.toEntity(request);
         diet.setUser(user);
+        diet.updateTotalCalories();
 
         DietModel saved = dietRepository.save(diet);
 

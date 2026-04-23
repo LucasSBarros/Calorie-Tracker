@@ -20,5 +20,8 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "imc", ignore = true)
     @Mapping(target = "tmb", ignore = true)
+    @Mapping(target = "diets", ignore = true)
+    @Mapping(target = "goal", ignore = true)
+    @Mapping(target = "statuses", ignore = true)
     void updateEntityFromDto(UserRequestDto dto, @MappingTarget UserModel entity);
 }

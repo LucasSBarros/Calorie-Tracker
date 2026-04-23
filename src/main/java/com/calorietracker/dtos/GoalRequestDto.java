@@ -9,5 +9,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 public record GoalRequestDto(
         @NotNull UUID userId,
         @NotNull @PositiveOrZero BigDecimal weight,
-        BigDecimal bf) {
+        @NotNull @PositiveOrZero BigDecimal startWeight,
+        BigDecimal bf,
+        BigDecimal startBf) {
 }

@@ -43,8 +43,8 @@ spring:
 
 app:
   reminder:
-    inactivity-hours: 1
-    cron: "0 */1 * * * ?"
+    inactivity-hours: 24
+    cron: "0 0 8 * * ?"
     from-email: ${MAIL_USERNAME}
 
 management:

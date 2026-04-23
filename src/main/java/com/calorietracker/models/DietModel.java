@@ -54,4 +54,31 @@ public class DietModel implements Serializable {
 
     private LocalDate finalDate; // Data final
 
+    /**
+     * Calcula o total de calorias da dieta com base nas refeições cadastradas.
+     * 
+     * @return total de calorias da dieta
+     */
+    public BigDecimal calculateTotalCalories() {
+
+        BigDecimal result = BigDecimal.ZERO;
+
+        if (meals != null) {
+            for (MealModel meal : meals) {
+                if (meal != null && meal.getTotalCaloriesPerMeal() != null) {
+                    result = result.add(meal.getTotalCaloriesPerMeal());
+                }
+            }
+        }
+
+        return result;
+
+    }
+
+    /**
+     * Atualiza o total de calorias da dieta com base nas refeições atuais.
+     */
+    public void updateTotalCalories() {
+        this.totalCalories = calculateTotalCalories();
+    }
 }

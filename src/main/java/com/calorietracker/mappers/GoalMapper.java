@@ -17,8 +17,6 @@ public interface GoalMapper {
 
     @Mapping(target = "idGoal", ignore = true)
     @Mapping(target = "user", ignore = true)
-    @Mapping(target = "startWeight", ignore = true)
-    @Mapping(target = "startBf", ignore = true)
     GoalModel toEntity(GoalRequestDto dto);
 
     @Mapping(target = "idGoal", ignore = true)

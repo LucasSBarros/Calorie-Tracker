@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.calorietracker.models.UserModel;
+import com.calorietracker.projections.UserReportProjection;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserModel, UUID> {
@@ -37,4 +38,12 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
                   )
             """)
     List<UserModel> findUsersWithoutMealsSince(@Param("limitDateTime") LocalDateTime limitDateTime);
+
+    @Query("""
+                    select u
+                    from UserModel u
+                    where u.idUser = :userId
+            """)
+    Optional<UserReportProjection> findReportDataById(@Param("userId") UUID userId);
+
 }

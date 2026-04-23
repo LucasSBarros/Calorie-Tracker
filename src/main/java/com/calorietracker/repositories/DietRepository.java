@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.calorietracker.models.DietModel;
@@ -29,4 +31,21 @@ public interface DietRepository extends JpaRepository<DietModel, UUID> {
                         "meals.mealIngredients.ingredient.macro"
         })
         List<DietModel> findAll();
+
+        @Query("""
+                        select d.name
+                        from DietModel d
+                        where d.user.idUser = :userId
+                        order by d.initialDate desc
+                                """)
+        List<String> findDietNamesByUserId(@Param("userId") UUID userId);
+
+        @EntityGraph(attributePaths = {
+                        "meals",
+                        "meals.mealIngredients",
+                        "meals.mealIngredients.ingredient",
+                        "meals.mealIngredients.ingredient.macro"
+        })
+        List<DietModel> findByUser_IdUserOrderByInitialDateDesc(UUID userId);
+
 }

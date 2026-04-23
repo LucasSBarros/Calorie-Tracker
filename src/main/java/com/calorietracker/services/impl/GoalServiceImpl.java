@@ -27,7 +27,6 @@ public class GoalServiceImpl implements GoalService {
 
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
-    private final StatusRepository statusRepository;
     private final GoalMapper goalMapper;
 
     @Override
@@ -41,11 +40,6 @@ public class GoalServiceImpl implements GoalService {
 
         GoalModel goal = goalMapper.toEntity(request);
         goal.setUser(user);
-
-        goal.setStartWeight(user.getWeight());
-
-        statusRepository.findFirstByUser_IdUserOrderByCreatedAtDesc(request.userId())
-                .ifPresent(status -> goal.setStartBf(status.getBf()));
 
         GoalModel saved = goalRepository.save(goal);
         return goalMapper.toDto(saved);

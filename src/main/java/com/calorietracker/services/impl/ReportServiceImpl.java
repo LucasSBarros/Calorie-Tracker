@@ -17,7 +17,7 @@ import com.calorietracker.dtos.UserReportDataDto;
 import com.calorietracker.exceptions.PdfReportGenerationException;
 import com.calorietracker.services.ReportQueryService;
 import com.calorietracker.services.ReportService;
-import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,14 +41,17 @@ public class ReportServiceImpl implements ReportService {
         String html = loadTemplate("reports/user-report.xhtml");
         String css = loadTemplate("reports/report.css");
 
-        html = html.replace("<link rel=\"stylesheet\" href=\"report.css\" />", "<style>" + css + "</style>");
+        html = html.replace(
+                "<link rel=\"stylesheet\" href=\"report.css\" />",
+                "<style>" + css + "</style>");
+
         html = fillTemplate(html, report);
 
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.withHtmlContent(html, null);
-            builder.toStream(outputStream);
-            builder.run();
+            ITextRenderer renderer = new ITextRenderer();
+            renderer.setDocumentFromString(html);
+            renderer.layout();
+            renderer.createPDF(outputStream);
 
             return outputStream.toByteArray();
         } catch (Exception ex) {

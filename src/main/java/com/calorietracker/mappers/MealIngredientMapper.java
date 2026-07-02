@@ -6,8 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.calorietracker.dtos.MealIngredientDto;
-import com.calorietracker.dtos.MealIngredientRequestDto;
+import com.calorietracker.dtos.response.MealIngredientResponse;
+import com.calorietracker.dtos.request.MealIngredientRequest;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.models.IngredientModel;
 import com.calorietracker.models.MealIngredientModel;
@@ -19,12 +19,12 @@ public abstract class MealIngredientMapper {
     @Autowired
     protected IngredientRepository ingredientRepository;
 
-    public abstract MealIngredientDto toDto(MealIngredientModel model);
+    public abstract MealIngredientResponse toResponse(MealIngredientModel model);
 
     @Mapping(target = "idMealIngredient", ignore = true)
     @Mapping(target = "meal", ignore = true) // será setado no MealMapper @AfterMapping
     @Mapping(target = "ingredient", source = "ingredientId") // UUID -> IngredientModel
-    public abstract MealIngredientModel toEntity(MealIngredientRequestDto dto);
+    public abstract MealIngredientModel toEntity(MealIngredientRequest dto);
 
     protected IngredientModel map(UUID ingredientId) {
 

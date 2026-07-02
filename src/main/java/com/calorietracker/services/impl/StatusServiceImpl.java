@@ -10,9 +10,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.StatusDto;
-import com.calorietracker.dtos.StatusRequestDto;
-import com.calorietracker.dtos.UserProgressDto;
+import com.calorietracker.dtos.response.StatusResponse;
+import com.calorietracker.dtos.request.StatusRequest;
+import com.calorietracker.dtos.response.ProgressResponse;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.StatusMapper;
 import com.calorietracker.models.GoalModel;
@@ -37,52 +37,52 @@ public class StatusServiceImpl implements StatusService {
     private final StatusMapper statusMapper;
 
     @Override
-    public StatusDto create(StatusRequestDto request) {
-        UserModel user = userRepository.findById(request.userId())
+    public StatusResponse create(StatusRequest request) {
+        var user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
-        StatusModel status = statusMapper.toEntity(request);
+        var status = statusMapper.toEntity(request);
         status.setUser(user);
 
-        StatusModel saved = statusRepository.save(status);
-        return statusMapper.toDto(saved);
+        var saved = statusRepository.save(status);
+        return statusMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<StatusDto> findAll() {
+    public List<StatusResponse> findAll() {
         return statusRepository.findAll()
                 .stream()
-                .map(statusMapper::toDto)
+                .map(statusMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<StatusDto> findById(UUID id) {
-        return statusRepository.findById(id).map(statusMapper::toDto);
+    public Optional<StatusResponse> findById(UUID id) {
+        return statusRepository.findById(id).map(statusMapper::toResponse);
     }
 
     @Override
-    public Optional<StatusDto> update(UUID id, StatusRequestDto request) {
+    public Optional<StatusResponse> update(UUID id, StatusRequest request) {
 
-        Optional<StatusDto> result = Optional.empty();
+        Optional<StatusResponse> result = Optional.empty();
 
         Optional<StatusModel> statusOpt = statusRepository.findById(id);
 
         if (statusOpt.isPresent()) {
 
-            StatusModel existing = statusOpt.get();
+            var existing = statusOpt.get();
 
-            UserModel user = userRepository.findById(request.userId())
+            var user = userRepository.findById(request.userId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
-            statusMapper.updateEntityFromDto(request, existing);
+            statusMapper.updateEntityFromRequest(request, existing);
             existing.setUser(user);
 
-            StatusModel saved = statusRepository.save(existing);
+            var saved = statusRepository.save(existing);
 
-            result = Optional.of(statusMapper.toDto(saved));
+            result = Optional.of(statusMapper.toResponse(saved));
         }
 
         return result;
@@ -98,9 +98,9 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserProgressDto> getUserProgress(UUID userId) {
+    public Optional<ProgressResponse> getUserProgress(UUID userId) {
 
-        Optional<UserProgressDto> result = Optional.empty();
+        Optional<ProgressResponse> result = Optional.empty();
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
@@ -110,8 +110,8 @@ public class StatusServiceImpl implements StatusService {
 
         if (goalOpt.isPresent() && currentStatusOpt.isPresent()) {
 
-            GoalModel goal = goalOpt.get();
-            StatusModel currentStatus = currentStatusOpt.get();
+            var goal = goalOpt.get();
+            var currentStatus = currentStatusOpt.get();
 
             BigDecimal weightProgressPercent = calculateProgressPercent(
                     goal.getStartWeight(),
@@ -123,7 +123,7 @@ public class StatusServiceImpl implements StatusService {
                     currentStatus.getBf(),
                     goal.getBf());
 
-            result = Optional.of(new UserProgressDto(
+            result = Optional.of(new ProgressResponse(
                     userId,
                     currentStatus.getWeight(),
                     goal.getWeight(),
@@ -138,19 +138,19 @@ public class StatusServiceImpl implements StatusService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StatusDto> findHistoryByUser(UUID userId) {
+    public List<StatusResponse> findHistoryByUser(UUID userId) {
         return statusRepository.findByUser_IdUserOrderByCreatedAtDesc(userId)
                 .stream()
-                .map(statusMapper::toDto)
+                .map(statusMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<StatusDto> findByUserAndPeriod(UUID userId, LocalDateTime start, LocalDateTime end) {
+    public List<StatusResponse> findByUserAndPeriod(UUID userId, LocalDateTime start, LocalDateTime end) {
         return statusRepository.findByUser_IdUserAndCreatedAtBetweenOrderByCreatedAtDesc(userId, start, end)
                 .stream()
-                .map(statusMapper::toDto)
+                .map(statusMapper::toResponse)
                 .toList();
     }
 

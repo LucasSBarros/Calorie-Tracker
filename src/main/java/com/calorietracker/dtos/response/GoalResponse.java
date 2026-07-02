@@ -1,9 +1,9 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.response;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record GoalDto(
+public record GoalResponse(
         UUID idGoal,
         UUID userId,
         BigDecimal weight,

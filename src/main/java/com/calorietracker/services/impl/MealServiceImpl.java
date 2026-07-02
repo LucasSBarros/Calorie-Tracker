@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.MealDto;
-import com.calorietracker.dtos.MealRequestDto;
+import com.calorietracker.dtos.response.MealResponse;
+import com.calorietracker.dtos.request.MealRequest;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.MealMapper;
 import com.calorietracker.models.DietModel;
@@ -28,57 +28,57 @@ public class MealServiceImpl implements MealService {
     private final MealMapper mealMapper;
 
     @Override
-    public MealDto create(MealRequestDto request) {
+    public MealResponse create(MealRequest request) {
 
-        MealModel meal = mealMapper.toEntity(request);
-        MealModel saved = mealRepository.save(meal);
+        var meal = mealMapper.toEntity(request);
+        var saved = mealRepository.save(meal);
         updateDietTotalCalories(saved.getDiet());
 
-        return mealMapper.toDto(saved);
+        return mealMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MealDto> findAll() {
+    public List<MealResponse> findAll() {
         return mealRepository.findAll()
                 .stream()
-                .map(mealMapper::toDto)
+                .map(mealMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<MealDto> findById(UUID id) {
-        return mealRepository.findWithDetailsByIdMeal(id).map(mealMapper::toDto);
+    public Optional<MealResponse> findById(UUID id) {
+        return mealRepository.findWithDetailsByIdMeal(id).map(mealMapper::toResponse);
     }
 
     @Override
-    public Optional<MealDto> update(UUID id, MealRequestDto request) {
+    public Optional<MealResponse> update(UUID id, MealRequest request) {
 
-        Optional<MealDto> result = Optional.empty();
+        Optional<MealResponse> result = Optional.empty();
         Optional<MealModel> mealOpt = mealRepository.findWithDetailsByIdMeal(id);
 
         if (mealOpt.isPresent()) {
 
-            MealModel existing = mealOpt.get();
-            UUID oldDietId = existing.getDiet() != null
+            var existing = mealOpt.get();
+            var oldDietId = existing.getDiet() != null
                     ? existing.getDiet().getIdDiet()
                     : null;
-            mealMapper.updateEntityFromDto(request, existing);
-            MealModel saved = mealRepository.save(existing);
+            mealMapper.updateEntityFromRequest(request, existing);
+            var saved = mealRepository.save(existing);
             updateDietTotalCalories(saved.getDiet());
 
             if (oldDietId != null
                     && saved.getDiet() != null
                     && !oldDietId.equals(saved.getDiet().getIdDiet())) {
 
-                DietModel oldDiet = dietRepository.findById(oldDietId)
+                var oldDiet = dietRepository.findById(oldDietId)
                         .orElseThrow(() -> new ResourceNotFoundException("Diet not found: " + oldDietId));
                 updateDietTotalCalories(oldDiet);
 
             }
 
-            result = Optional.of(mealMapper.toDto(saved));
+            result = Optional.of(mealMapper.toResponse(saved));
 
         }
 
@@ -89,9 +89,9 @@ public class MealServiceImpl implements MealService {
     @Override
     public void delete(UUID id) {
 
-        MealModel meal = mealRepository.findWithDetailsByIdMeal(id)
+        var meal = mealRepository.findWithDetailsByIdMeal(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found: " + id));
-        DietModel diet = meal.getDiet();
+        var diet = meal.getDiet();
         mealRepository.delete(meal);
         updateDietTotalCalories(diet);
     }
@@ -106,7 +106,7 @@ public class MealServiceImpl implements MealService {
     private void updateDietTotalCalories(DietModel diet) {
 
         if (diet != null) {
-            DietModel managedDiet = dietRepository.findWithDetailsByIdDiet(diet.getIdDiet())
+            var managedDiet = dietRepository.findWithDetailsByIdDiet(diet.getIdDiet())
                     .orElseThrow(() -> new ResourceNotFoundException("Diet not found: " + diet.getIdDiet()));
             managedDiet.updateTotalCalories();
             dietRepository.save(managedDiet);

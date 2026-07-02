@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.IngredientDto;
-import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.dtos.response.IngredientResponse;
+import com.calorietracker.dtos.request.IngredientRequest;
 import com.calorietracker.services.IngredientService;
 
 import jakarta.validation.Valid;
@@ -26,12 +26,12 @@ public class IngredientController {
     /**
      * POST - /api/ingredients, Rota de criação de uma ingredienta.
      * 
-     * @param requestDto
+     * @param request
      * @return
      */
     @PostMapping
-    public ResponseEntity<IngredientDto> saveIngredient(@RequestBody @Valid IngredientRequestDto requestDto) {
-        IngredientDto created = ingredientService.create(requestDto);
+    public ResponseEntity<IngredientResponse> saveIngredient(@RequestBody @Valid IngredientRequest request) {
+        var created = ingredientService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -41,7 +41,7 @@ public class IngredientController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<IngredientDto>> getAllIngredients() {
+    public ResponseEntity<List<IngredientResponse>> getAllIngredients() {
         return ResponseEntity.status(HttpStatus.OK).body(ingredientService.findAll());
     }
 
@@ -52,7 +52,7 @@ public class IngredientController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientDto> getOneIngredient(@PathVariable UUID id) {
+    public ResponseEntity<IngredientResponse> getOneIngredient(@PathVariable UUID id) {
         return ingredientService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -62,15 +62,15 @@ public class IngredientController {
      * PUT - /api/ingredients/id, Rota que atualiza uma ingredienta
      * 
      * @param id
-     * @param requestDto
+     * @param request
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientDto> updateIngredient(
+    public ResponseEntity<IngredientResponse> updateIngredient(
             @PathVariable UUID id,
-            @RequestBody @Valid IngredientRequestDto requestDto) {
+            @RequestBody @Valid IngredientRequest request) {
 
-        return ingredientService.update(id, requestDto)
+        return ingredientService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

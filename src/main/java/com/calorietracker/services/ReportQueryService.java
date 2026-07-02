@@ -2,7 +2,7 @@ package com.calorietracker.services;
 
 import java.util.UUID;
 
-import com.calorietracker.dtos.UserReportDataDto;
+import com.calorietracker.dtos.report.UserReportData;
 
 public interface ReportQueryService {
 
@@ -21,6 +21,6 @@ public interface ReportQueryService {
      * @param userId identificador do usuário
      * @return objeto contendo todos os dados necessários para geração do relatório
      */
-    UserReportDataDto getUserReportData(UUID userId);
+    UserReportData getUserReportData(UUID userId);
 
 }

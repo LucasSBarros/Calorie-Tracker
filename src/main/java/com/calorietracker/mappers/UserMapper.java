@@ -5,15 +5,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import com.calorietracker.dtos.UserDto;
-import com.calorietracker.dtos.UserRequestDto;
+import com.calorietracker.dtos.response.UserResponse;
+import com.calorietracker.dtos.request.UserRequest;
 import com.calorietracker.models.UserModel;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
 
     @Mapping(target = "age", expression = "java(model.calculateAge())")
-    UserDto toDto(UserModel model);
+    UserResponse toResponse(UserModel model);
 
     @Mapping(target = "idUser", ignore = true)
     @Mapping(target = "email", ignore = true)
@@ -23,5 +23,5 @@ public interface UserMapper {
     @Mapping(target = "diets", ignore = true)
     @Mapping(target = "goal", ignore = true)
     @Mapping(target = "statuses", ignore = true)
-    void updateEntityFromDto(UserRequestDto dto, @MappingTarget UserModel entity);
+    void updateEntityFromRequest(UserRequest dto, @MappingTarget UserModel entity);
 }

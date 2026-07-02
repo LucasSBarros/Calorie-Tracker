@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.ApplicationEventPublisher;
 import com.calorietracker.events.DietPublishedEvent;
 
-import com.calorietracker.dtos.DietDto;
-import com.calorietracker.dtos.DietRequestDto;
+import com.calorietracker.dtos.response.DietResponse;
+import com.calorietracker.dtos.request.DietRequest;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.DietMapper;
 import com.calorietracker.models.DietModel;
@@ -32,15 +32,15 @@ public class DietServiceImpl implements DietService {
 
     @Override
     @Transactional
-    public DietDto create(DietRequestDto request) {
-        UserModel user = userRepository.findById(request.userId())
+    public DietResponse create(DietRequest request) {
+        var user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
-        DietModel diet = dietMapper.toEntity(request);
+        var diet = dietMapper.toEntity(request);
         diet.setUser(user);
         diet.updateTotalCalories();
 
-        DietModel saved = dietRepository.save(diet);
+        var saved = dietRepository.save(diet);
 
         eventPublisher.publishEvent(
                 new DietPublishedEvent(
@@ -51,49 +51,49 @@ public class DietServiceImpl implements DietService {
                         saved.getName()));
 
         return dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
-                .map(dietMapper::toDto)
-                .orElseGet(() -> dietMapper.toDto(saved));
+                .map(dietMapper::toResponse)
+                .orElseGet(() -> dietMapper.toResponse(saved));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<DietDto> findAll() {
+    public List<DietResponse> findAll() {
         return dietRepository.findAll()
                 .stream()
-                .map(dietMapper::toDto)
+                .map(dietMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<DietDto> findById(UUID id) {
+    public Optional<DietResponse> findById(UUID id) {
         return dietRepository.findWithDetailsByIdDiet(id)
-                .map(dietMapper::toDto);
+                .map(dietMapper::toResponse);
     }
 
     @Override
-    public Optional<DietDto> update(UUID id, DietRequestDto request) {
+    public Optional<DietResponse> update(UUID id, DietRequest request) {
 
-        Optional<DietDto> result = Optional.empty();
+        Optional<DietResponse> result = Optional.empty();
 
         Optional<DietModel> dietOpt = dietRepository.findById(id);
 
         if (dietOpt.isPresent()) {
-            DietModel existing = dietOpt.get();
+            var existing = dietOpt.get();
 
-            UserModel user = userRepository.findById(request.userId())
+            var user = userRepository.findById(request.userId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
-            dietMapper.updateEntityFromDto(request, existing);
+            dietMapper.updateEntityFromRequest(request, existing);
             existing.setUser(user);
 
-            DietModel saved = dietRepository.save(existing);
+            var saved = dietRepository.save(existing);
 
-            DietDto dto = dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
-                    .map(dietMapper::toDto)
-                    .orElseGet(() -> dietMapper.toDto(saved));
+            var response = dietRepository.findWithDetailsByIdDiet(saved.getIdDiet())
+                    .map(dietMapper::toResponse)
+                    .orElseGet(() -> dietMapper.toResponse(saved));
 
-            result = Optional.of(dto);
+            result = Optional.of(response);
         }
 
         return result;

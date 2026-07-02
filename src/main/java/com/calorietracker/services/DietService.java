@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.DietDto;
-import com.calorietracker.dtos.DietRequestDto;
+import com.calorietracker.dtos.response.DietResponse;
+import com.calorietracker.dtos.request.DietRequest;
 
 public interface DietService {
 
@@ -15,14 +15,14 @@ public interface DietService {
      * @param request
      * @return
      */
-    DietDto create(DietRequestDto request);
+    DietResponse create(DietRequest request);
 
     /**
      * Método de listagem das dietas
      * 
      * @return
      */
-    List<DietDto> findAll();
+    List<DietResponse> findAll();
 
     /**
      * Método de busca de dieta por Id
@@ -30,7 +30,7 @@ public interface DietService {
      * @param id
      * @return
      */
-    Optional<DietDto> findById(UUID id);
+    Optional<DietResponse> findById(UUID id);
 
     /**
      * Método de atualização de uma dieta
@@ -39,7 +39,7 @@ public interface DietService {
      * @param request
      * @return
      */
-    Optional<DietDto> update(UUID id, DietRequestDto request);
+    Optional<DietResponse> update(UUID id, DietRequest request);
 
     /**
      * Método de deletar uma dieta

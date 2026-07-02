@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.GoalDto;
-import com.calorietracker.dtos.GoalRequestDto;
+import com.calorietracker.dtos.response.GoalResponse;
+import com.calorietracker.dtos.request.GoalRequest;
 import com.calorietracker.exceptions.ConflictException;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.GoalMapper;
@@ -30,48 +30,48 @@ public class GoalServiceImpl implements GoalService {
     private final GoalMapper goalMapper;
 
     @Override
-    public GoalDto create(GoalRequestDto request) {
+    public GoalResponse create(GoalRequest request) {
         if (goalRepository.existsByUser_IdUser(request.userId())) {
             throw new ConflictException("User already has a goal: " + request.userId());
         }
 
-        UserModel user = userRepository.findById(request.userId())
+        var user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
-        GoalModel goal = goalMapper.toEntity(request);
+        var goal = goalMapper.toEntity(request);
         goal.setUser(user);
 
-        GoalModel saved = goalRepository.save(goal);
-        return goalMapper.toDto(saved);
+        var saved = goalRepository.save(goal);
+        return goalMapper.toResponse(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<GoalDto> findAll() {
+    public List<GoalResponse> findAll() {
         return goalRepository.findAll()
                 .stream()
-                .map(goalMapper::toDto)
+                .map(goalMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<GoalDto> findById(UUID id) {
-        return goalRepository.findById(id).map(goalMapper::toDto);
+    public Optional<GoalResponse> findById(UUID id) {
+        return goalRepository.findById(id).map(goalMapper::toResponse);
     }
 
     @Override
-    public Optional<GoalDto> update(UUID id, GoalRequestDto request) {
+    public Optional<GoalResponse> update(UUID id, GoalRequest request) {
 
-        Optional<GoalDto> result = Optional.empty();
+        Optional<GoalResponse> result = Optional.empty();
 
         Optional<GoalModel> goalOpt = goalRepository.findById(id);
 
         if (goalOpt.isPresent()) {
 
-            GoalModel existing = goalOpt.get();
+            var existing = goalOpt.get();
 
-            UserModel user = userRepository.findById(request.userId())
+            var user = userRepository.findById(request.userId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
             if (!existing.getUser().getIdUser().equals(request.userId())
@@ -79,12 +79,12 @@ public class GoalServiceImpl implements GoalService {
                 throw new ConflictException("User already has a goal: " + request.userId());
             }
 
-            goalMapper.updateEntityFromDto(request, existing);
+            goalMapper.updateEntityFromRequest(request, existing);
             existing.setUser(user);
 
-            GoalModel saved = goalRepository.save(existing);
+            var saved = goalRepository.save(existing);
 
-            result = Optional.of(goalMapper.toDto(saved));
+            result = Optional.of(goalMapper.toResponse(saved));
         }
 
         return result;

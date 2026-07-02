@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.UserDto;
-import com.calorietracker.dtos.UserRequestDto;
+import com.calorietracker.dtos.response.UserResponse;
+import com.calorietracker.dtos.request.UserRequest;
 
 public interface UserService {
 
@@ -14,7 +14,7 @@ public interface UserService {
      * 
      * @return
      */
-    List<UserDto> findAll();
+    List<UserResponse> findAll();
 
     /**
      * Método de busca de usuário por Id
@@ -22,7 +22,7 @@ public interface UserService {
      * @param id
      * @return
      */
-    Optional<UserDto> findById(UUID id);
+    Optional<UserResponse> findById(UUID id);
 
     /**
      * Método de atualização de um usuário
@@ -31,7 +31,7 @@ public interface UserService {
      * @param request
      * @return
      */
-    Optional<UserDto> update(UUID id, UserRequestDto request);
+    Optional<UserResponse> update(UUID id, UserRequest request);
 
     /**
      * Método de deletar um usuário

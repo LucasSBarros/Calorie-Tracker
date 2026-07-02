@@ -1,15 +1,15 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public record DietReportDto(
+public record DietResponse(
         UUID idDiet,
         String name,
+        List<MealResponse> meals,
         BigDecimal totalCalories,
         LocalDate initialDate,
-        LocalDate finalDate,
-        List<MealReportDto> meals) {
+        LocalDate finalDate) {
 }

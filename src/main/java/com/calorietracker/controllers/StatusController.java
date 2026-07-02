@@ -9,9 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.StatusDto;
-import com.calorietracker.dtos.StatusRequestDto;
-import com.calorietracker.dtos.UserProgressDto;
+import com.calorietracker.dtos.response.StatusResponse;
+import com.calorietracker.dtos.request.StatusRequest;
+import com.calorietracker.dtos.response.ProgressResponse;
 import com.calorietracker.services.StatusService;
 
 import jakarta.validation.Valid;
@@ -31,8 +31,8 @@ public class StatusController {
      * Rota de criação de um status.
      */
     @PostMapping
-    public ResponseEntity<StatusDto> saveStatus(@RequestBody @Valid StatusRequestDto requestDto) {
-        StatusDto created = statusService.create(requestDto);
+    public ResponseEntity<StatusResponse> saveStatus(@RequestBody @Valid StatusRequest request) {
+        var created = statusService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -41,7 +41,7 @@ public class StatusController {
      * Rota que busca por todos os status.
      */
     @GetMapping
-    public ResponseEntity<List<StatusDto>> getAllStatus() {
+    public ResponseEntity<List<StatusResponse>> getAllStatus() {
         return ResponseEntity.ok(statusService.findAll());
     }
 
@@ -50,7 +50,7 @@ public class StatusController {
      * Rota que busca um status a partir do seu ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<StatusDto> getOneStatus(@PathVariable UUID id) {
+    public ResponseEntity<StatusResponse> getOneStatus(@PathVariable UUID id) {
         return statusService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -61,11 +61,11 @@ public class StatusController {
      * Rota que atualiza um status.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<StatusDto> updateStatus(
+    public ResponseEntity<StatusResponse> updateStatus(
             @PathVariable UUID id,
-            @RequestBody @Valid StatusRequestDto requestDto) {
+            @RequestBody @Valid StatusRequest request) {
 
-        return statusService.update(id, requestDto)
+        return statusService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -85,7 +85,7 @@ public class StatusController {
      * Rota que exibe o progresso percentual do usuário em relação à meta.
      */
     @GetMapping("/progress/{userId}")
-    public ResponseEntity<UserProgressDto> getUserProgress(@PathVariable UUID userId) {
+    public ResponseEntity<ProgressResponse> getUserProgress(@PathVariable UUID userId) {
         return statusService.getUserProgress(userId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -96,7 +96,7 @@ public class StatusController {
      * Rota que exibe o histórico de status de um usuário.
      */
     @GetMapping("/history/{userId}")
-    public ResponseEntity<List<StatusDto>> getUserHistory(@PathVariable UUID userId) {
+    public ResponseEntity<List<StatusResponse>> getUserHistory(@PathVariable UUID userId) {
         return ResponseEntity.ok(statusService.findHistoryByUser(userId));
     }
 
@@ -105,7 +105,7 @@ public class StatusController {
      * Rota que busca o histórico de status por usuário e período.
      */
     @GetMapping("/history/{userId}/period")
-    public ResponseEntity<List<StatusDto>> getUserHistoryByPeriod(
+    public ResponseEntity<List<StatusResponse>> getUserHistoryByPeriod(
             @PathVariable UUID userId,
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {

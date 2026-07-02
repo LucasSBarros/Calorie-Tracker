@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.AuthResponseDto;
-import com.calorietracker.dtos.LoginRequestDto;
-import com.calorietracker.dtos.RegisterRequestDto;
+import com.calorietracker.dtos.response.AuthResponse;
+import com.calorietracker.dtos.request.LoginRequest;
+import com.calorietracker.dtos.request.RegisterRequest;
 import com.calorietracker.services.AuthService;
 
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class AuthController {
      * @return token de autenticação
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDto> register(@RequestBody @Valid RegisterRequestDto request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
@@ -37,7 +37,7 @@ public class AuthController {
      * @return token de autenticação
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@RequestBody @Valid LoginRequestDto request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 }

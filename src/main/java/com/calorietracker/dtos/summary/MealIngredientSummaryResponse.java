@@ -1,9 +1,9 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.summary;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record MealIngredientReportDto(
+public record MealIngredientSummaryResponse(
         UUID idMealIngredient,
         BigDecimal weight,
         String ingredientName,

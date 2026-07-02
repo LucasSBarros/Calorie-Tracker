@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.GoalDto;
-import com.calorietracker.dtos.GoalRequestDto;
+import com.calorietracker.dtos.response.GoalResponse;
+import com.calorietracker.dtos.request.GoalRequest;
 import com.calorietracker.services.GoalService;
 
 import jakarta.validation.Valid;
@@ -26,12 +26,12 @@ public class GoalController {
     /**
      * POST - /api/goals, Rota de criação de um objetivo.
      * 
-     * @param requestDto
+     * @param request
      * @return
      */
     @PostMapping
-    public ResponseEntity<GoalDto> saveGoal(@RequestBody @Valid GoalRequestDto requestDto) {
-        GoalDto created = goalService.create(requestDto);
+    public ResponseEntity<GoalResponse> saveGoal(@RequestBody @Valid GoalRequest request) {
+        var created = goalService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -41,7 +41,7 @@ public class GoalController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<GoalDto>> getAllGoals() {
+    public ResponseEntity<List<GoalResponse>> getAllGoals() {
         return ResponseEntity.status(HttpStatus.OK).body(goalService.findAll());
     }
 
@@ -52,7 +52,7 @@ public class GoalController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<GoalDto> getOneGoal(@PathVariable UUID id) {
+    public ResponseEntity<GoalResponse> getOneGoal(@PathVariable UUID id) {
         return goalService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -62,15 +62,15 @@ public class GoalController {
      * PUT - /api/goals/id, Rota que atualiza um objetivo
      * 
      * @param id
-     * @param requestDto
+     * @param request
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<GoalDto> updateGoal(
+    public ResponseEntity<GoalResponse> updateGoal(
             @PathVariable UUID id,
-            @RequestBody @Valid GoalRequestDto requestDto) {
+            @RequestBody @Valid GoalRequest request) {
 
-        return goalService.update(id, requestDto)
+        return goalService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

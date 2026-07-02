@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.MealDto;
-import com.calorietracker.dtos.MealRequestDto;
+import com.calorietracker.dtos.response.MealResponse;
+import com.calorietracker.dtos.request.MealRequest;
 
 public interface MealService {
 
@@ -15,14 +15,14 @@ public interface MealService {
      * @param request
      * @return
      */
-    MealDto create(MealRequestDto request);
+    MealResponse create(MealRequest request);
 
     /**
      * Método de listagem das refeições
      * 
      * @return
      */
-    List<MealDto> findAll();
+    List<MealResponse> findAll();
 
     /**
      * Método de busca de refeição por Id
@@ -30,7 +30,7 @@ public interface MealService {
      * @param id
      * @return
      */
-    Optional<MealDto> findById(UUID id);
+    Optional<MealResponse> findById(UUID id);
 
     /**
      * Método de atualização de uma refeição
@@ -39,7 +39,7 @@ public interface MealService {
      * @param request
      * @return
      */
-    Optional<MealDto> update(UUID id, MealRequestDto request);
+    Optional<MealResponse> update(UUID id, MealRequest request);
 
     /**
      * Método de deletar uma refeição

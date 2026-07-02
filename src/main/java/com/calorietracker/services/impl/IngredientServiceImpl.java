@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.IngredientDto;
-import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.dtos.response.IngredientResponse;
+import com.calorietracker.dtos.request.IngredientRequest;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.IngredientMapper;
 import com.calorietracker.models.IngredientModel;
@@ -25,42 +25,42 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientMapper ingredientMapper;
 
     @Override
-    public IngredientDto create(IngredientRequestDto request) {
-        IngredientModel ingredient = ingredientMapper.toEntity(request);
-        return ingredientMapper.toDto(ingredientRepository.save(ingredient));
+    public IngredientResponse create(IngredientRequest request) {
+        var ingredient = ingredientMapper.toEntity(request);
+        return ingredientMapper.toResponse(ingredientRepository.save(ingredient));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<IngredientDto> findAll() {
+    public List<IngredientResponse> findAll() {
         return ingredientRepository.findAll()
                 .stream()
-                .map(ingredientMapper::toDto)
+                .map(ingredientMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<IngredientDto> findById(UUID id) {
-        return ingredientRepository.findById(id).map(ingredientMapper::toDto);
+    public Optional<IngredientResponse> findById(UUID id) {
+        return ingredientRepository.findById(id).map(ingredientMapper::toResponse);
     }
 
     @Override
-    public Optional<IngredientDto> update(UUID id, IngredientRequestDto request) {
+    public Optional<IngredientResponse> update(UUID id, IngredientRequest request) {
 
-        Optional<IngredientDto> result = Optional.empty();
+        Optional<IngredientResponse> result = Optional.empty();
 
         Optional<IngredientModel> ingredientOpt = ingredientRepository.findById(id);
 
         if (ingredientOpt.isPresent()) {
 
-            IngredientModel existing = ingredientOpt.get();
+            var existing = ingredientOpt.get();
 
-            ingredientMapper.updateEntityFromDto(request, existing);
+            ingredientMapper.updateEntityFromRequest(request, existing);
 
-            IngredientModel saved = ingredientRepository.save(existing);
+            var saved = ingredientRepository.save(existing);
 
-            result = Optional.of(ingredientMapper.toDto(saved));
+            result = Optional.of(ingredientMapper.toResponse(saved));
         }
 
         return result;

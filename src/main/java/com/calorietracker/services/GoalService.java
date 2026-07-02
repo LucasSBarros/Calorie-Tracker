@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.GoalDto;
-import com.calorietracker.dtos.GoalRequestDto;
+import com.calorietracker.dtos.response.GoalResponse;
+import com.calorietracker.dtos.request.GoalRequest;
 
 public interface GoalService {
 
@@ -15,14 +15,14 @@ public interface GoalService {
      * @param request
      * @return
      */
-    GoalDto create(GoalRequestDto request);
+    GoalResponse create(GoalRequest request);
 
     /**
      * Método de listagem de objetivos
      * 
      * @return
      */
-    List<GoalDto> findAll();
+    List<GoalResponse> findAll();
 
     /**
      * Método de busca de objetivo por Id
@@ -30,7 +30,7 @@ public interface GoalService {
      * @param id
      * @return
      */
-    Optional<GoalDto> findById(UUID id);
+    Optional<GoalResponse> findById(UUID id);
 
     /**
      * Método de atualização de um objetivo
@@ -39,7 +39,7 @@ public interface GoalService {
      * @param request
      * @return
      */
-    Optional<GoalDto> update(UUID id, GoalRequestDto request);
+    Optional<GoalResponse> update(UUID id, GoalRequest request);
 
     /**
      * Método de deletar um objetivo

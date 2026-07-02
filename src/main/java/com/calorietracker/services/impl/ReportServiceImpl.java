@@ -1,7 +1,6 @@
 package com.calorietracker.services.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -10,10 +9,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.DietReportDto;
-import com.calorietracker.dtos.MealIngredientReportDto;
-import com.calorietracker.dtos.MealReportDto;
-import com.calorietracker.dtos.UserReportDataDto;
+import com.calorietracker.dtos.summary.DietSummaryResponse;
+import com.calorietracker.dtos.summary.MealIngredientSummaryResponse;
+import com.calorietracker.dtos.summary.MealSummaryResponse;
+import com.calorietracker.dtos.report.UserReportData;
 import com.calorietracker.exceptions.PdfReportGenerationException;
 import com.calorietracker.services.ReportQueryService;
 import com.calorietracker.services.ReportService;
@@ -36,10 +35,10 @@ public class ReportServiceImpl implements ReportService {
     @Override
     @Transactional(readOnly = true)
     public byte[] generateUserReportPdf(UUID userId) {
-        UserReportDataDto report = reportQueryService.getUserReportData(userId);
+        var report = reportQueryService.getUserReportData(userId);
 
-        String html = loadTemplate("reports/user-report.xhtml");
-        String css = loadTemplate("reports/report.css");
+        var html = loadTemplate("reports/user-report.xhtml");
+        var css = loadTemplate("reports/report.css");
 
         html = html.replace(
                 "<link rel=\"stylesheet\" href=\"report.css\" />",
@@ -47,8 +46,8 @@ public class ReportServiceImpl implements ReportService {
 
         html = fillTemplate(html, report);
 
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            ITextRenderer renderer = new ITextRenderer();
+        try (var outputStream = new ByteArrayOutputStream()) {
+            var renderer = new ITextRenderer();
             renderer.setDocumentFromString(html);
             renderer.layout();
             renderer.createPDF(outputStream);
@@ -66,7 +65,7 @@ public class ReportServiceImpl implements ReportService {
      * @return conteúdo do arquivo
      */
     private String loadTemplate(String path) {
-        try (InputStream inputStream = new ClassPathResource(path).getInputStream()) {
+        try (var inputStream = new ClassPathResource(path).getInputStream()) {
             return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (Exception ex) {
             throw new PdfReportGenerationException("Error loading template file: " + path, ex);
@@ -80,7 +79,7 @@ public class ReportServiceImpl implements ReportService {
      * @param report
      * @return conteúdo XHTML preenchido
      */
-    private String fillTemplate(String html, UserReportDataDto report) {
+    private String fillTemplate(String html, UserReportData report) {
         return html
                 .replace("{{name}}", escape(value(report.name())))
                 .replace("{{email}}", escape(value(report.email())))
@@ -106,14 +105,14 @@ public class ReportServiceImpl implements ReportService {
      * @param diets
      * @return lista de dietas formatada em XHTML
      */
-    private String buildDietList(List<DietReportDto> diets) {
+    private String buildDietList(List<DietSummaryResponse> diets) {
         if (diets == null || diets.isEmpty()) {
             return "<li>Nenhuma dieta cadastrada</li>";
         }
 
-        StringBuilder result = new StringBuilder();
+        var result = new StringBuilder();
 
-        for (DietReportDto diet : diets) {
+        for (DietSummaryResponse diet : diets) {
             result.append("<li>")
                     .append("<strong>Nome:</strong> ").append(escape(value(diet.name()))).append("<br />")
                     .append("<strong>Calorias totais:</strong> ").append(escape(value(diet.totalCalories())))
@@ -125,7 +124,7 @@ public class ReportServiceImpl implements ReportService {
             if (diet.meals() != null && !diet.meals().isEmpty()) {
                 result.append("<ul>");
 
-                for (MealReportDto meal : diet.meals()) {
+                for (MealSummaryResponse meal : diet.meals()) {
                     result.append("<li>")
                             .append("<strong>Refeição:</strong> ").append(escape(value(meal.description())))
                             .append("<br />")
@@ -136,7 +135,7 @@ public class ReportServiceImpl implements ReportService {
                     if (meal.mealIngredients() != null && !meal.mealIngredients().isEmpty()) {
                         result.append("<ul>");
 
-                        for (MealIngredientReportDto item : meal.mealIngredients()) {
+                        for (MealIngredientSummaryResponse item : meal.mealIngredients()) {
                             result.append("<li>")
                                     .append(escape(value(item.ingredientName())))
                                     .append(" - ")

@@ -1,4 +1,4 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.request;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 
-public record UserRequestDto(
+public record UserRequest(
         @NotBlank String name,
         @NotNull @Positive BigDecimal weight,
         @NotNull @Positive BigDecimal height,

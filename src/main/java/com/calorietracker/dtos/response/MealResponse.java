@@ -1,14 +1,14 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.UUID;
 
-public record MealDto(
+public record MealResponse(
         UUID idMeal,
         LocalDateTime mealDateTime,
         String description,
-        LinkedHashSet<MealIngredientDto> mealIngredients,
+        List<MealIngredientResponse> mealIngredients,
         BigDecimal totalCaloriesPerMeal) {
 }

@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.UserDto;
-import com.calorietracker.dtos.UserRequestDto;
+import com.calorietracker.dtos.response.UserResponse;
+import com.calorietracker.dtos.request.UserRequest;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.UserMapper;
 import com.calorietracker.models.UserModel;
@@ -26,35 +26,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
+    public List<UserResponse> findAll() {
         return userRepository.findAll()
                 .stream()
-                .map(userMapper::toDto)
+                .map(userMapper::toResponse)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<UserDto> findById(UUID id) {
-        return userRepository.findById(id).map(userMapper::toDto);
+    public Optional<UserResponse> findById(UUID id) {
+        return userRepository.findById(id).map(userMapper::toResponse);
     }
 
     @Override
-    public Optional<UserDto> update(UUID id, UserRequestDto request) {
+    public Optional<UserResponse> update(UUID id, UserRequest request) {
 
-        Optional<UserDto> result = Optional.empty();
+        Optional<UserResponse> result = Optional.empty();
 
         Optional<UserModel> userOpt = userRepository.findById(id);
 
         if (userOpt.isPresent()) {
 
-            UserModel existing = userOpt.get();
+            var existing = userOpt.get();
 
-            userMapper.updateEntityFromDto(request, existing);
+            userMapper.updateEntityFromRequest(request, existing);
 
-            UserModel saved = userRepository.save(existing);
+            var saved = userRepository.save(existing);
 
-            result = Optional.of(userMapper.toDto(saved));
+            result = Optional.of(userMapper.toResponse(saved));
         }
 
         return result;

@@ -1,4 +1,4 @@
-package com.calorietracker.dtos;
+package com.calorietracker.dtos.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.calorietracker.models.Gender;
 
-public record UserDto(
+public record UserResponse(
         UUID idUser,
         String name,
         String email,

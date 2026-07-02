@@ -7,9 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.AuthResponseDto;
-import com.calorietracker.dtos.LoginRequestDto;
-import com.calorietracker.dtos.RegisterRequestDto;
+import com.calorietracker.dtos.response.AuthResponse;
+import com.calorietracker.dtos.request.LoginRequest;
+import com.calorietracker.dtos.request.RegisterRequest;
 import com.calorietracker.exceptions.ConflictException;
 import com.calorietracker.exceptions.UnauthorizedException;
 import com.calorietracker.models.UserModel;
@@ -30,13 +30,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthResponseDto register(RegisterRequestDto request) {
+    public AuthResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
             throw new ConflictException("Email already in use: " + request.email());
         }
 
-        UserModel user = new UserModel();
+        var user = new UserModel();
         user.setName(request.name());
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
@@ -45,15 +45,15 @@ public class AuthServiceImpl implements AuthService {
         user.setBirthDate(request.birthDate());
         user.setGender(request.gender());
 
-        UserModel saved = userRepository.save(user);
+        var saved = userRepository.save(user);
 
-        String token = jwtService.generateToken(saved);
+        var token = jwtService.generateToken(saved);
 
-        return new AuthResponseDto(token);
+        return new AuthResponse(token);
     }
 
     @Override
-    public AuthResponseDto login(LoginRequestDto request) {
+    public AuthResponse login(LoginRequest request) {
 
         try {
             authenticationManager.authenticate(
@@ -64,11 +64,11 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException("Invalid credentials");
         }
 
-        UserModel user = userRepository.findByEmail(request.email())
+        var user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
-        String token = jwtService.generateToken(user);
+        var token = jwtService.generateToken(user);
 
-        return new AuthResponseDto(token);
+        return new AuthResponse(token);
     }
 }

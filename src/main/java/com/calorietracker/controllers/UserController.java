@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.UserDto;
-import com.calorietracker.dtos.UserRequestDto;
+import com.calorietracker.dtos.response.UserResponse;
+import com.calorietracker.dtos.request.UserRequest;
 import com.calorietracker.services.UserService;
 
 import jakarta.validation.Valid;
@@ -29,7 +29,7 @@ public class UserController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
@@ -40,7 +40,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getOneUser(@PathVariable UUID id) {
+    public ResponseEntity<UserResponse> getOneUser(@PathVariable UUID id) {
         return userService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -50,15 +50,15 @@ public class UserController {
      * PUT - /api/users/id, Rota que atualiza uma usera
      * 
      * @param id
-     * @param requestDto
+     * @param request
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(
+    public ResponseEntity<UserResponse> updateUser(
             @PathVariable UUID id,
-            @RequestBody @Valid UserRequestDto requestDto) {
+            @RequestBody @Valid UserRequest request) {
 
-        return userService.update(id, requestDto)
+        return userService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

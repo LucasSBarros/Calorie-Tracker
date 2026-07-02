@@ -28,9 +28,9 @@ public class ReportController {
      */
     @GetMapping("/users/{userId}/pdf")
     public ResponseEntity<byte[]> generateUserReport(@PathVariable UUID userId) {
-        byte[] pdf = reportService.generateUserReportPdf(userId);
+        var pdf = reportService.generateUserReportPdf(userId);
 
-        HttpHeaders headers = new HttpHeaders();
+        var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDisposition(
                 ContentDisposition.inline()

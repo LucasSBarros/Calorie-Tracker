@@ -8,11 +8,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.calorietracker.dtos.DietReportDto;
-import com.calorietracker.dtos.MealIngredientReportDto;
-import com.calorietracker.dtos.MealReportDto;
-import com.calorietracker.dtos.UserProgressDto;
-import com.calorietracker.dtos.UserReportDataDto;
+import com.calorietracker.dtos.summary.DietSummaryResponse;
+import com.calorietracker.dtos.summary.MealIngredientSummaryResponse;
+import com.calorietracker.dtos.summary.MealSummaryResponse;
+import com.calorietracker.dtos.response.ProgressResponse;
+import com.calorietracker.dtos.report.UserReportData;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.models.DietModel;
 import com.calorietracker.models.GoalModel;
@@ -41,7 +41,7 @@ public class ReportQueryServiceImpl implements ReportQueryService {
 
         @Override
         @Transactional(readOnly = true)
-        public UserReportDataDto getUserReportData(UUID userId) {
+        public UserReportData getUserReportData(UUID userId) {
 
                 UserReportProjection user = userRepository.findReportDataById(userId)
                                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
@@ -52,11 +52,11 @@ public class ReportQueryServiceImpl implements ReportQueryService {
                                 .findFirstByUser_IdUserOrderByCreatedAtDesc(userId)
                                 .orElse(null);
 
-                UserProgressDto progress = statusService.getUserProgress(userId).orElse(null);
+                ProgressResponse progress = statusService.getUserProgress(userId).orElse(null);
 
-                List<DietReportDto> diets = buildDietReports(userId);
+                List<DietSummaryResponse> diets = buildDietReports(userId);
 
-                return new UserReportDataDto(
+                return new UserReportData(
                                 user.getIdUser(),
                                 user.getName(),
                                 user.getEmail(),
@@ -90,10 +90,10 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * 
          * @return lista de dietas formatadas para o relatório
          */
-        private List<DietReportDto> buildDietReports(UUID userId) {
+        private List<DietSummaryResponse> buildDietReports(UUID userId) {
                 return dietRepository.findByUser_IdUserOrderByInitialDateDesc(userId)
                                 .stream()
-                                .map(this::mapDietToReportDto)
+                                .map(this::mapDietToSummary)
                                 .toList();
         }
 
@@ -105,10 +105,10 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * @param diet dieta a ser convertida
          * @return DTO da dieta para o relatório
          */
-        private DietReportDto mapDietToReportDto(DietModel diet) {
-                List<MealReportDto> meals = mapMeals(diet);
+        private DietSummaryResponse mapDietToSummary(DietModel diet) {
+                List<MealSummaryResponse> meals = mapMeals(diet);
 
-                return new DietReportDto(
+                return new DietSummaryResponse(
                                 diet.getIdDiet(),
                                 diet.getName(),
                                 diet.getTotalCalories(),
@@ -125,14 +125,14 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * @param diet dieta que contém as refeições
          * @return lista de refeições formatadas para o relatório
          */
-        private List<MealReportDto> mapMeals(DietModel diet) {
+        private List<MealSummaryResponse> mapMeals(DietModel diet) {
                 if (diet.getMeals() == null) {
                         return List.of();
                 }
 
                 return diet.getMeals()
                                 .stream()
-                                .map(this::mapMealToReportDto)
+                                .map(this::mapMealToSummary)
                                 .toList();
         }
 
@@ -145,10 +145,10 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * 
          * @return DTO da refeição para o relatório
          */
-        private MealReportDto mapMealToReportDto(MealModel meal) {
-                List<MealIngredientReportDto> ingredients = mapMealIngredients(meal);
+        private MealSummaryResponse mapMealToSummary(MealModel meal) {
+                List<MealIngredientSummaryResponse> ingredients = mapMealIngredients(meal);
 
-                return new MealReportDto(
+                return new MealSummaryResponse(
                                 meal.getIdMeal(),
                                 meal.getMealDateTime(),
                                 meal.getDescription(),
@@ -165,14 +165,14 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * @param meal refeição que contém os ingredientes
          * @return lista de ingredientes formatados para o relatório
          */
-        private List<MealIngredientReportDto> mapMealIngredients(MealModel meal) {
+        private List<MealIngredientSummaryResponse> mapMealIngredients(MealModel meal) {
                 if (meal.getMealIngredients() == null) {
                         return List.of();
                 }
 
                 return meal.getMealIngredients()
                                 .stream()
-                                .map(this::mapMealIngredientToReportDto)
+                                .map(this::mapMealIngredientToSummary)
                                 .toList();
         }
 
@@ -186,7 +186,7 @@ public class ReportQueryServiceImpl implements ReportQueryService {
          * 
          * @return DTO do ingrediente para o relatório
          */
-        private MealIngredientReportDto mapMealIngredientToReportDto(MealIngredientModel item) {
+        private MealIngredientSummaryResponse mapMealIngredientToSummary(MealIngredientModel item) {
 
                 String ingredientName = null;
 
@@ -194,7 +194,7 @@ public class ReportQueryServiceImpl implements ReportQueryService {
                         ingredientName = item.getIngredient().getName();
                 }
 
-                return new MealIngredientReportDto(
+                return new MealIngredientSummaryResponse(
                                 item.getIdMealIngredient(),
                                 item.getWeight(),
                                 ingredientName,

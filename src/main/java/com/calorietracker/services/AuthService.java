@@ -1,8 +1,8 @@
 package com.calorietracker.services;
 
-import com.calorietracker.dtos.AuthResponseDto;
-import com.calorietracker.dtos.LoginRequestDto;
-import com.calorietracker.dtos.RegisterRequestDto;
+import com.calorietracker.dtos.response.AuthResponse;
+import com.calorietracker.dtos.request.LoginRequest;
+import com.calorietracker.dtos.request.RegisterRequest;
 
 public interface AuthService {
 
@@ -13,7 +13,7 @@ public interface AuthService {
      * @param request
      * @return token de autenticação
      */
-    AuthResponseDto register(RegisterRequestDto request);
+    AuthResponse register(RegisterRequest request);
 
     /**
      * Método responsável por autenticar um usuário e gerar o token JWT.
@@ -21,5 +21,5 @@ public interface AuthService {
      * @param request
      * @return token de autentação
      */
-    AuthResponseDto login(LoginRequestDto request);
+    AuthResponse login(LoginRequest request);
 }

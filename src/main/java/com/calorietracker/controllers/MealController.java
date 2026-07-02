@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.calorietracker.dtos.MealDto;
-import com.calorietracker.dtos.MealRequestDto;
+import com.calorietracker.dtos.response.MealResponse;
+import com.calorietracker.dtos.request.MealRequest;
 import com.calorietracker.services.MealService;
 
 import jakarta.validation.Valid;
@@ -26,12 +26,12 @@ public class MealController {
     /**
      * POST - /api/meals, Rota de criação de uma meala.
      * 
-     * @param requestDto
+     * @param request
      * @return
      */
     @PostMapping
-    public ResponseEntity<MealDto> saveMeal(@RequestBody @Valid MealRequestDto requestDto) {
-        MealDto created = mealService.create(requestDto);
+    public ResponseEntity<MealResponse> saveMeal(@RequestBody @Valid MealRequest request) {
+        var created = mealService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -41,7 +41,7 @@ public class MealController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<List<MealDto>> getAllMeals() {
+    public ResponseEntity<List<MealResponse>> getAllMeals() {
         return ResponseEntity.status(HttpStatus.OK).body(mealService.findAll());
     }
 
@@ -52,7 +52,7 @@ public class MealController {
      * @return
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MealDto> getOneMeal(@PathVariable UUID id) {
+    public ResponseEntity<MealResponse> getOneMeal(@PathVariable UUID id) {
         return mealService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -62,15 +62,15 @@ public class MealController {
      * PUT - /api/meals/id, Rota que atualiza uma meala
      * 
      * @param id
-     * @param requestDto
+     * @param request
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<MealDto> updateMeal(
+    public ResponseEntity<MealResponse> updateMeal(
             @PathVariable UUID id,
-            @RequestBody @Valid MealRequestDto requestDto) {
+            @RequestBody @Valid MealRequest request) {
 
-        return mealService.update(id, requestDto)
+        return mealService.update(id, request)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.IngredientDto;
-import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.dtos.response.IngredientResponse;
+import com.calorietracker.dtos.request.IngredientRequest;
 
 public interface IngredientService {
 
@@ -15,14 +15,14 @@ public interface IngredientService {
      * @param request
      * @return
      */
-    IngredientDto create(IngredientRequestDto request);
+    IngredientResponse create(IngredientRequest request);
 
     /**
      * Método de listagem de ingredientes
      * 
      * @return
      */
-    List<IngredientDto> findAll();
+    List<IngredientResponse> findAll();
 
     /**
      * Método de busca de ingredientes por Id
@@ -30,7 +30,7 @@ public interface IngredientService {
      * @param id
      * @return
      */
-    Optional<IngredientDto> findById(UUID id);
+    Optional<IngredientResponse> findById(UUID id);
 
     /**
      * Método de atualização de um ingredientes
@@ -39,7 +39,7 @@ public interface IngredientService {
      * @param request
      * @return
      */
-    Optional<IngredientDto> update(UUID id, IngredientRequestDto request);
+    Optional<IngredientResponse> update(UUID id, IngredientRequest request);
 
     /**
      * Método de deletar um ingredientes

@@ -5,18 +5,18 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import com.calorietracker.dtos.IngredientDto;
-import com.calorietracker.dtos.IngredientRequestDto;
+import com.calorietracker.dtos.response.IngredientResponse;
+import com.calorietracker.dtos.request.IngredientRequest;
 import com.calorietracker.models.IngredientModel;
 
 @Mapper(componentModel = "spring", uses = MacroMapper.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface IngredientMapper {
 
-    IngredientDto toDto(IngredientModel model);
+    IngredientResponse toResponse(IngredientModel model);
 
     @Mapping(target = "idIngredient", ignore = true)
-    IngredientModel toEntity(IngredientRequestDto dto);
+    IngredientModel toEntity(IngredientRequest dto);
 
     @Mapping(target = "idIngredient", ignore = true)
-    void updateEntityFromDto(IngredientRequestDto dto, @MappingTarget IngredientModel entity);
+    void updateEntityFromRequest(IngredientRequest dto, @MappingTarget IngredientModel entity);
 }

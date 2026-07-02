@@ -5,18 +5,18 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-import com.calorietracker.dtos.MacroDto;
-import com.calorietracker.dtos.MacroRequestDto;
+import com.calorietracker.dtos.response.MacroResponse;
+import com.calorietracker.dtos.request.MacroRequest;
 import com.calorietracker.models.MacroModel;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface MacroMapper {
 
-    MacroDto toDto(MacroModel model);
+    MacroResponse toResponse(MacroModel model);
 
     @Mapping(target = "idMacro", ignore = true)
-    MacroModel toEntity(MacroRequestDto dto);
+    MacroModel toEntity(MacroRequest dto);
 
     @Mapping(target = "idMacro", ignore = true)
-    void updateEntityFromDto(MacroRequestDto dto, @MappingTarget MacroModel entity);
+    void updateEntityFromRequest(MacroRequest dto, @MappingTarget MacroModel entity);
 }

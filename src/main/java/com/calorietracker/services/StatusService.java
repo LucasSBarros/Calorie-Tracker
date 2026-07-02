@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.calorietracker.dtos.StatusDto;
-import com.calorietracker.dtos.StatusRequestDto;
-import com.calorietracker.dtos.UserProgressDto;
+import com.calorietracker.dtos.response.StatusResponse;
+import com.calorietracker.dtos.request.StatusRequest;
+import com.calorietracker.dtos.response.ProgressResponse;
 
 public interface StatusService {
 
@@ -17,14 +17,14 @@ public interface StatusService {
      * @param request
      * @return
      */
-    StatusDto create(StatusRequestDto request);
+    StatusResponse create(StatusRequest request);
 
     /**
      * Método de listagem dos status
      * 
      * @return
      */
-    List<StatusDto> findAll();
+    List<StatusResponse> findAll();
 
     /**
      * Método de busca de status por Id
@@ -32,7 +32,7 @@ public interface StatusService {
      * @param id
      * @return
      */
-    Optional<StatusDto> findById(UUID id);
+    Optional<StatusResponse> findById(UUID id);
 
     /**
      * Método de atualização de um status
@@ -41,7 +41,7 @@ public interface StatusService {
      * @param request
      * @return
      */
-    Optional<StatusDto> update(UUID id, StatusRequestDto request);
+    Optional<StatusResponse> update(UUID id, StatusRequest request);
 
     /**
      * Método de deletar um status
@@ -57,7 +57,7 @@ public interface StatusService {
      * @param userId
      * @return
      */
-    Optional<UserProgressDto> getUserProgress(UUID userId);
+    Optional<ProgressResponse> getUserProgress(UUID userId);
 
     /**
      * Método para mostrat o histórico do usuário
@@ -65,7 +65,7 @@ public interface StatusService {
      * @param userId
      * @return
      */
-    List<StatusDto> findHistoryByUser(UUID userId);
+    List<StatusResponse> findHistoryByUser(UUID userId);
 
     /**
      * Método para pesquisar o histório pela data e por usuário
@@ -75,6 +75,6 @@ public interface StatusService {
      * @param end
      * @return
      */
-    List<StatusDto> findByUserAndPeriod(UUID userId, LocalDateTime start, LocalDateTime end);
+    List<StatusResponse> findByUserAndPeriod(UUID userId, LocalDateTime start, LocalDateTime end);
 
 }

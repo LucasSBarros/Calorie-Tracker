@@ -49,8 +49,12 @@ h2 {
   margin-bottom: 14px;
 }
 
-.section.compact {
+.section {
   page-break-inside: avoid;
+}
+
+.page-break-before {
+  page-break-before: always;
 }
 
 table {
@@ -73,57 +77,57 @@ th {
 
 .metadata th,
 .details th {
-  width: 18%;
+  width: 20%;
 }
 
-.summary th {
-  color: #ffffff;
-  background-color: #0f766e;
+.summary th,
+.summary td {
+  width: 25%;
   text-align: center;
 }
 
 .summary td {
-  text-align: center;
-}
-
-.summary td:first-child {
-  color: #0f766e;
+  font-size: 12px;
   font-weight: bold;
+  color: #0f766e;
+  padding: 10px 5px;
 }
 
-.diets-section {
-  page-break-before: auto;
+.data-table {
+  font-size: 9px;
 }
 
-.diet-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.data-table thead {
+  display: table-header-group;
 }
 
-.diet-list > li {
-  margin: 0 0 12px 0;
-  padding: 10px;
-  border: 1px solid #cbd5e1;
-  border-left: 4px solid #14b8a6;
-  background-color: #f8fafc;
+.data-table tr {
   page-break-inside: avoid;
 }
 
-.diet-list ul {
-  margin: 8px 0 0 0;
+.data-table th {
+  background-color: #0f766e;
+  color: #ffffff;
+  text-align: center;
+}
+
+.data-table td {
+  text-align: center;
+}
+
+.data-table tr.missing td {
+  background-color: #fff1f2;
+  color: #9f1239;
+}
+
+.missing-days {
+  margin: 0;
   padding-left: 18px;
+  columns: 3;
 }
 
-.diet-list ul li {
-  margin-bottom: 6px;
-  padding: 6px;
-  border: 1px solid #e2e8f0;
-  background-color: #ffffff;
-}
-
-.diet-list strong {
-  color: #0f766e;
+.missing-days li {
+  margin-bottom: 3px;
 }
 
 .footer {

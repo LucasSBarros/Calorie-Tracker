@@ -23,5 +23,6 @@ public interface UserMapper {
     @Mapping(target = "diets", ignore = true)
     @Mapping(target = "goal", ignore = true)
     @Mapping(target = "statuses", ignore = true)
+    @Mapping(target = "mealLogs", ignore = true)
     void updateEntityFromRequest(UserRequest dto, @MappingTarget UserModel entity);
 }

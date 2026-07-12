@@ -50,6 +50,8 @@ public class DietModel implements Serializable {
 
     private BigDecimal totalCalories; // Total de calorias
 
+    private BigDecimal dailyCalorieTarget; // Meta diária de calorias
+
     private LocalDate initialDate; // Data inicial
 
     private LocalDate finalDate; // Data final

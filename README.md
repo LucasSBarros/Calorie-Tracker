@@ -4,10 +4,15 @@ Backend para controle de ingestao calorica e acompanhamento nutricional.
 A aplicacao permite gerenciar usuarios, refeicoes, ingredientes, metas,
 historico de status nutricional e relatorios em PDF.
 
+Documentação técnica e roteiro de apresentação do relatório de progresso:
+
+- [Relatório de Progresso Calórico](docs/RELATORIO_PROGRESSO.md)
+
 ## Funcionalidades
 
 - Cadastro e autenticacao de usuarios com JWT
 - Registro de refeicoes e ingredientes
+- Registro historico de refeicoes consumidas
 - Calculo de calorias e macronutrientes
 - Definicao de metas nutricionais
 - Acompanhamento de progresso corporal
@@ -94,7 +99,7 @@ Os contratos ficam em `src/main/java/com/calorietracker/dtos` e sao separados po
 - `response`: saida HTTP de endpoints, por exemplo `DietResponse`, `MealResponse`, `ProgressResponse`.
 - `summary`: visoes resumidas ou aninhadas, por exemplo `MealSummaryResponse`.
 - `report`: estruturas especificas de relatorio, por exemplo `UserReportData`.
-- `projections`: interfaces do Spring Data ficam fora de `dtos`, em `projections`.
+- `projections`: records e interfaces de leitura do Spring Data ficam fora de `dtos`, em `projections`.
 
 Controllers nao devem retornar entidades JPA. A camada web fala em `request` e `response`; entidades `*Model` ficam restritas a repositories, services, mappers, batch, security e listeners quando necessario.
 
@@ -151,5 +156,28 @@ Nao use `var` em campos, parametros, retornos de metodos, tipos numericos ambigu
 - `POST /api/diets`
 - `GET /api/meals`
 - `POST /api/meals`
+- `POST /api/meal-logs`
+- `GET /api/meal-logs?from=2026-07-01&to=2026-07-09`
 - `GET /api/status/progress/{userId}`
+- `GET /api/reports/progress?from=2026-06-12&to=2026-07-09`
+- `GET /api/reports/progress/pdf?from=2026-06-12&to=2026-07-09`
 - `GET /api/reports/users/{userId}/pdf`
+
+`/api/meals` representa as refeicoes planejadas de uma dieta.
+`/api/meal-logs` registra o consumo real do usuario autenticado.
+O relatorio de progresso usa os registros de consumo e assume os ultimos 28 dias
+quando `from` e `to` nao sao informados. O mesmo relatorio pode ser obtido em
+JSON por `/api/reports/progress` ou em PDF por `/api/reports/progress/pdf`.
+
+Dados para testar o relatório podem ser carregados manualmente com:
+
+```bash
+mysql -u root -p calorieTracker \
+  < src/main/resources/db/testdata/progress-report-seed.sql
+```
+
+No DBeaver, abra o arquivo conectado ao banco `calorieTracker` e use
+**Executar script SQL** (`Alt+X`). Não envie o conteúdo inteiro como uma única
+instrução SQL.
+
+O script cria o usuário `progress.report@example.com` com a senha `Test@123`.

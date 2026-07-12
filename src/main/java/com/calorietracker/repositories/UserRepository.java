@@ -30,11 +30,10 @@ public interface UserRepository extends JpaRepository<UserModel, UUID> {
                       where d.user = u
                   )
                   and not exists (
-                      select m.idMeal
-                      from MealModel m
-                      join m.diet d
-                      where d.user = u
-                        and m.mealDateTime >= :limitDateTime
+                      select m.idMealLog
+                      from MealLogModel m
+                      where m.user = u
+                        and m.consumedAt >= :limitDateTime
                   )
             """)
     List<UserModel> findUsersWithoutMealsSince(@Param("limitDateTime") LocalDateTime limitDateTime);

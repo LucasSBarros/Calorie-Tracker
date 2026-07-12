@@ -6,97 +6,87 @@
     <link rel="stylesheet" href="report.css" />
   </head>
   <body>
-    <h1>Relatório Nutricional</h1>
+    <div class="header">
+      <h1>Relatório Nutricional</h1>
+      <p class="subtitle">Dados físicos, objetivos e planejamento alimentar</p>
+    </div>
 
-    <div class="section">
-      <h2>Dados do Usuário</h2>
+    <div class="metadata">
       <table>
         <tr>
-          <th>Nome</th>
+          <th>Usuário</th>
           <td>{{name}}</td>
+          <th>Gerado em</th>
+          <td>{{generatedAt}}</td>
         </tr>
         <tr>
-          <th>Email</th>
-          <td>{{email}}</td>
+          <th>E-mail</th>
+          <td colspan="3">{{email}}</td>
         </tr>
+      </table>
+    </div>
+
+    <div class="section compact">
+      <h2>Dados do usuário</h2>
+      <table class="details">
         <tr>
           <th>Peso</th>
           <td>{{weight}}</td>
-        </tr>
-        <tr>
           <th>Altura</th>
           <td>{{height}}</td>
         </tr>
         <tr>
-          <th>Data de nascimento</th>
+          <th>Nascimento</th>
           <td>{{birthDate}}</td>
-        </tr>
-        <tr>
           <th>Idade</th>
           <td>{{age}}</td>
         </tr>
         <tr>
           <th>Gênero</th>
           <td>{{gender}}</td>
-        </tr>
-        <tr>
           <th>IMC</th>
           <td>{{imc}}</td>
         </tr>
         <tr>
           <th>TMB</th>
-          <td>{{tmb}}</td>
+          <td colspan="3">{{tmb}}</td>
         </tr>
       </table>
     </div>
 
-    <div class="section">
-      <h2>Objetivo</h2>
-      <table>
+    <div class="section compact">
+      <h2>Objetivo e status atual</h2>
+      <table class="summary">
         <tr>
-          <th>Peso alvo</th>
+          <th>Indicador</th>
+          <th>Meta</th>
+          <th>Valor atual</th>
+          <th>Progresso</th>
+        </tr>
+        <tr>
+          <td>Peso</td>
           <td>{{goalWeight}}</td>
-        </tr>
-        <tr>
-          <th>BF alvo</th>
-          <td>{{goalBf}}</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="section">
-      <h2>Status Atual</h2>
-      <table>
-        <tr>
-          <th>Peso atual</th>
           <td>{{currentWeight}}</td>
-        </tr>
-        <tr>
-          <th>BF atual</th>
-          <td>{{currentBf}}</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="section">
-      <h2>Progresso</h2>
-      <table>
-        <tr>
-          <th>Progresso de peso</th>
           <td>{{weightProgressPercent}}</td>
         </tr>
         <tr>
-          <th>Progresso de BF</th>
+          <td>Gordura corporal</td>
+          <td>{{goalBf}}</td>
+          <td>{{currentBf}}</td>
           <td>{{bfProgressPercent}}</td>
         </tr>
       </table>
     </div>
 
-    <div class="section">
-      <h2>Dietas</h2>
-      <ul>
+    <div class="section diets-section">
+      <h2>Dietas e refeições planejadas</h2>
+      <ul class="diet-list">
         {{diets}}
       </ul>
+    </div>
+
+    <div class="footer">
+      <p>Calorie Tracker — relatório gerado automaticamente.</p>
     </div>
   </body>
 </html>

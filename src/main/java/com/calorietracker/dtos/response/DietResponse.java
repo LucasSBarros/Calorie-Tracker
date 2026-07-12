@@ -10,6 +10,7 @@ public record DietResponse(
         String name,
         List<MealResponse> meals,
         BigDecimal totalCalories,
+        BigDecimal dailyCalorieTarget,
         LocalDate initialDate,
         LocalDate finalDate) {
 }

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Relatório de Progresso Calórico</title>
+    <link rel="stylesheet" href="progress-report.css" />
+  </head>
+  <body>
+    <div class="header">
+      <h1>Relatório de Progresso Calórico</h1>
+      <p class="subtitle">Acompanhamento de consumo e aderência nutricional</p>
+    </div>
+
+    <div class="metadata">
+      <table>
+        <tr>
+          <th>Usuário</th>
+          <td>{{userEmail}}</td>
+          <th>Período</th>
+          <td>{{periodFrom}} a {{periodTo}}</td>
+        </tr>
+        <tr>
+          <th>Gerado em</th>
+          <td>{{generatedAt}}</td>
+          <th>Dias analisados</th>
+          <td>Consulte o detalhamento diário</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Dieta vigente</h2>
+      <table class="details">
+        <tr>
+          <th>Nome</th>
+          <td>{{dietName}}</td>
+        </tr>
+        <tr>
+          <th>Vigência</th>
+          <td>{{dietPeriod}}</td>
+        </tr>
+        <tr>
+          <th>Meta diária</th>
+          <td>{{dailyTarget}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Resumo do período</h2>
+      <table class="summary">
+        <tr>
+          <th>Média consumida</th>
+          <th>Diferença para a meta</th>
+          <th>Aderência</th>
+          <th>Tendência</th>
+        </tr>
+        <tr>
+          <td>{{averageConsumed}}</td>
+          <td>{{goalDifference}}</td>
+          <td>{{adherencePercentage}}</td>
+          <td>{{trendStatus}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Tendência recente</h2>
+      <table class="details">
+        <tr>
+          <th>Média dos sete dias anteriores</th>
+          <td>{{previousAverage}}</td>
+        </tr>
+        <tr>
+          <th>Média dos sete dias atuais</th>
+          <td>{{currentAverage}}</td>
+        </tr>
+        <tr>
+          <th>Variação</th>
+          <td>{{trendVariation}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Médias semanais</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Média diária</th>
+            <th>Meta diária</th>
+            <th>Aderência</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{weeklyRows}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section page-break-before">
+      <h2>Consumo diário</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Consumido</th>
+            <th>Meta</th>
+            <th>Diferença</th>
+            <th>Refeições</th>
+            <th>Situação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{dailyRows}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Dias sem refeição registrada</h2>
+      <ul class="missing-days">
+        {{daysWithoutMeals}}
+      </ul>
+    </div>
+
+    <div class="footer">
+      <p>Calorie Tracker — relatório gerado automaticamente.</p>
+    </div>
+  </body>
+</html>

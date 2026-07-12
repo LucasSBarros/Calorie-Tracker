@@ -11,6 +11,8 @@ import com.calorietracker.events.DietPublishedEvent;
 
 import com.calorietracker.dtos.response.DietResponse;
 import com.calorietracker.dtos.request.DietRequest;
+import com.calorietracker.exceptions.BusinessException;
+import com.calorietracker.exceptions.ConflictException;
 import com.calorietracker.exceptions.ResourceNotFoundException;
 import com.calorietracker.mappers.DietMapper;
 import com.calorietracker.models.DietModel;
@@ -35,6 +37,9 @@ public class DietServiceImpl implements DietService {
     public DietResponse create(DietRequest request) {
         var user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
+
+        validatePeriod(request);
+        validateNoOverlap(user.getIdUser(), null, request);
 
         var diet = dietMapper.toEntity(request);
         diet.setUser(user);
@@ -84,7 +89,12 @@ public class DietServiceImpl implements DietService {
             var user = userRepository.findById(request.userId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.userId()));
 
+            validatePeriod(request);
+            validateNoOverlap(user.getIdUser(), existing.getIdDiet(), request);
+
             dietMapper.updateEntityFromRequest(request, existing);
+            existing.setInitialDate(request.initialDate());
+            existing.setFinalDate(request.finalDate());
             existing.setUser(user);
 
             var saved = dietRepository.save(existing);
@@ -106,5 +116,37 @@ public class DietServiceImpl implements DietService {
         }
 
         dietRepository.deleteById(id);
+    }
+
+    /**
+     * Valida se a data inicial da dieta não ocorre depois da data final.
+     *
+     * @param request dados da dieta
+     */
+    private void validatePeriod(DietRequest request) {
+        if (request.initialDate() != null
+                && request.finalDate() != null
+                && request.initialDate().isAfter(request.finalDate())) {
+            throw new BusinessException("Diet initial date must be before or equal to final date");
+        }
+    }
+
+    /**
+     * Impede que um usuário possua dietas com períodos de vigência sobrepostos.
+     *
+     * @param userId identificador do usuário
+     * @param excludedDietId dieta ignorada durante uma atualização ou nula
+     * @param request período da dieta que será persistida
+     */
+    private void validateNoOverlap(UUID userId, UUID excludedDietId, DietRequest request) {
+        long overlaps = dietRepository.countOverlappingPeriods(
+                userId,
+                excludedDietId,
+                request.initialDate(),
+                request.finalDate());
+
+        if (overlaps > 0) {
+            throw new ConflictException("The user already has a diet in the informed period");
+        }
     }
 }
